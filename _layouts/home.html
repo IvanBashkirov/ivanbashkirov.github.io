@@ -1,0 +1,75 @@
+---
+layout: default
+---
+
+<main>
+<div class="tabs">
+  <label class='svg-label'>
+  <svg id='my-svg' width="59px" height="54px" viewBox="0 0 100 322" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+<g id="Artboard-Copy-2" stroke="#000000" stroke-width="5">
+<g id="Group" transform="translate(4.000000, 3.000000)">
+
+<path class='path1' fill='#2b2b2b' d='M2.27373675e-13,312.615424 L5.1842885,261.462757 L5.2962443,261.094119 L6.64866345,260.680643 L39.3380001,278.061871 L39.6369558,278.304882 L39.5084656,279.713246 Z'>
+</path>
+
+
+<path fill='#f00' class='path2' d='M62.0434406,153.472474 L74.6156359,129.827613 C76.6872692,125.668293 78.9776801,123.672991 83.021017,125.962777 L108.389756,139.451575 C112.433093,141.741361 111.945131,144.41522 109.873484,148.574544 L97.3012891,172.219404 L62.0434406,153.472474 Z'>
+</path>
+
+
+<path fill='#ff0' class='path3' d='M6.21732744,260.451297 C5.729073,260.191973 5.54429481,259.58637 5.80434904,259.099143 L62.0434406,153.472474 L97.3012891,172.219404 L41.1217551,277.877741 C40.8624731,278.365379 40.2569745,278.550499 39.769336,278.291217 L6.21732744,260.451297 Z'>
+</path>
+
+<path d='M321.706213,189.595396 C315.806144,186.436073 257.513699,155.222087 146.828879,95.9534396 L169.956937,52.1483628 C280.641757,111.417011 338.934202,142.630996 344.834271,145.790319 C350.73434,148.949642 349.803131,157.880469 342.040643,172.5828 C334.384426,187.083854 327.606282,192.754719 321.706213,189.595396 Z' opacity=0 fill='#ad683e' class="path4">
+  </path>
+
+
+</g>
+</g>
+</g>
+</svg>
+
+
+  </label>
+  <input id="tab-posts-radio" name="tab-posts-projects" type="radio" checked='checked' >
+  <label for="tab-posts-radio"><h3>Posts</h3></label>
+  <input id="tab-projects-radio" name="tab-posts-projects" type="radio">
+  <label for="tab-projects-radio"><h3>Projects</h3></label>
+
+  <div class="tab tab-posts">
+    <ul>
+      {% for post in site.posts %}
+      <li>
+        <a href="{{ post.url }}">
+          <span class='post-description'>
+            <h3>{{ post.title }}</h3>
+            <p>{{post.description}}</p>
+          </span>
+          <span class='post-info'>
+            <small>Posted 3 hours ago</small>
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="tab tab-projects">
+    <ul>
+      {% for project in site.projects %}
+      <li>
+        <a href="{{ project.url }}">
+          <span class='post-description'>
+            <h3>{{ project.title }}</h3>
+            <p>{{project.description}}</p>
+          </span>
+          <span class='post-info'>
+            <small>Posted 3 hours ago</small>
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+</main>
