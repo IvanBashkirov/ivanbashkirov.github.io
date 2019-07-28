@@ -3,6 +3,20 @@ layout: default
 ---
 
 <main>
+  <div class='bio-container'>
+
+    <section class='bio'>
+      <p>
+        I am Ivan Bashkirov and this is my personal blog.
+      </p>
+      <p>
+        I am a software engineer with interest in music and AI, so that's what I'll be writing about.
+      </p>
+      </section>
+      <div class='avatar'>
+        <img src='assets/img/ivan.jpeg'/>
+      </div>
+    </div>
 <div class="tabs">
   <label class='svg-label'>
   <svg id='my-svg' width="59px" height="54px" viewBox="0 0 100 322" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -39,7 +53,7 @@ layout: default
 
   <div class="tab tab-posts">
     <ul>
-      {% for post in site.posts %}
+      {% for post in site.posts | size > 0 %}
       <li>
         <a href="{{ post.url }}">
           <span class='post-description'>
@@ -47,7 +61,12 @@ layout: default
             <p>{{post.description}}</p>
           </span>
           <span class='post-info'>
-            <small>Posted 3 hours ago</small>
+            <small>Posted
+              <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+                {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+                {{ post.date | date: date_format }}
+              </time>
+            </small>
           </span>
         </a>
       </li>
@@ -55,6 +74,7 @@ layout: default
     </ul>
   </div>
   <div class="tab tab-projects">
+    {%- if false -%}
     <ul>
       {% for project in site.projects %}
       <li>
@@ -64,12 +84,20 @@ layout: default
             <p>{{project.description}}</p>
           </span>
           <span class='post-info'>
-            <small>Posted 3 hours ago</small>
+            <small>Posted
+              <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+                {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+                {{ project.date | date: date_format }}
+              </time>
+            </small>
           </span>
         </a>
       </li>
       {% endfor %}
     </ul>
+    {%- else -%}
+      Nothing here yet.
+    {%- endif -%}
   </div>
 </div>
 </main>
