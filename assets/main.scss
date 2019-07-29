@@ -75,6 +75,7 @@ main {
   overflow-y: auto;
   height: 50px;
   position: sticky;
+  position: -webkit-sticky;
   overflow-y: hidden;
   top: 20px;
   width: 50px;
