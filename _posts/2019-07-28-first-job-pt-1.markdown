@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "What I learnt at my first job as a Software Engineer: Pt. 1"
-description: "Shipping, Scrum and Making Friends"
+description: "Shipping, Scrum and making friends"
 permalink: first-job-pt-1
 ---
 Last month I left my job as a Software Developer at Taxi for Email. I held the position for nearly 2 years and sincerely hope that I managed to give the company close to what it gave me. In this post, I will try to sum up some of the things I learnt during my time there. Working at Taxi was my first software job so some of this might be a bit obvious or naive - well, I’ll write it out anyway if only to straighten out these points in my own head and draw a mental line under the lessons learnt.  
@@ -37,3 +37,7 @@ I started writing this section and realised I have quite a lot of things to say 
 There are days, admittedly, when  I think to myself, “doesn’t matter, I’ll just suck it up at work and power through, I have my friends and family outside”. I quickly call myself out on this thought and remind myself just how big a portion of my life I spend at work. It makes much more sense to try and make the best of your time there.
 
 All this sounds like working at Taxi was a constant struggle - it wasn’t! But,  as  I  mentioned before, working with the same people for a long time can be hard, and anyone can have bad days. I learnt to think twice before taking out my bad mood on my colleagues or blaming them for it.
+
+---
+
+Read the second part [here]({% post_url 2019-08-04-first-job-pt-2 %})
