@@ -4,7 +4,6 @@ layout: default
 
 <main>
   <div class='bio-container'>
-
     <section class='bio'>
       <p>
         I am Ivan Bashkirov and this is my personal blog.
@@ -53,7 +52,7 @@ layout: default
 
   <div class="tab tab-posts">
     <ul>
-      {% for post in site.posts | size > 0 %}
+      {% for post in site.posts %}
       <li>
         <a href="{{ post.url }}">
           <span class='post-description'>
