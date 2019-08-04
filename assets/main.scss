@@ -67,7 +67,7 @@ body {
 main {
   padding:40px;
   color:#345;
-  max-width: 900px;
+  max-width: 800px;
   margin: auto;
 }
 
@@ -197,4 +197,8 @@ input[name='tab-posts-projects'] {
     margin: 5px 0 20px 0;
     color: grey;
   }
+}
+
+blockquote {
+  font-style: italic;
 }
