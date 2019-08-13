@@ -4,7 +4,7 @@ title:  "The perfect dream"
 permalink: the-perfect-dream
 ---
 
-When I was writing this website I decided to have a separate “Projects” section. The idea was to motivate myself _do_ more things, try and finish at least some of the ideas and half-done side projects that collect dust on my mental shelves (ooh that was a nice metaphor). The plan turned out to be not so hot, weeks went by and the projects section still wasn’t getting any action. So, to improve the sad state of affairs I’m reserving to the favourite trick of bloggers who suddenly find their current life too boring to talk about - _The Throwback_.
+When I was writing this website I decided to have a separate “Projects” section. The idea was to motivate myself _do_ more things, try and finish at least some of the ideas and half-done side projects that collect dust on my mental shelves (ooh that was a nice metaphor). The plan turned out to be not so hot, weeks went by and the projects section still wasn’t getting any action. So, to improve the sad state of affairs I’m resorting to the favourite trick of bloggers who suddenly find their current life too boring to talk about - _The Throwback_.
 
 Yes, I’m posting something that I’ve done 6 years ago. And to justify it, I’m going to write a thoughtful post to go with it. And it’s about doing things.
 
