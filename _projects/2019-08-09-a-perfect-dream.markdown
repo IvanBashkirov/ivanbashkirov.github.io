@@ -10,7 +10,9 @@ Yes, I’m posting something that I’ve done 6 years ago. And to justify it, I�
 
 But first, about the project itself. 6 years ago I was studying Music Technology at the University of Edinburgh and was pretty into metalcore music. A Russian band "Change of Loyalty” just released a new album “Freethinker”, which I listened on repeat for a few days. I started playing some riffs on piano and recorded a full piano arrangement for one of the tracks. Playing it on the piano gave the piece a completely new feel - taken away from the heavy metal arrangement it brought all the focus back to the melody. Free from aggressive bass and drums, the piano version highlighted all the flows and turns of melodic phrases. I wanted to do more with it so I asked my music circle if anyone would be interested in recording a full cover of a metal track using orchestra instruments. Several weeks later, we got this:
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/t49DBZMOrRI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="videoWrapper">
+  <iframe src="https://www.youtube-nocookie.com/embed/t49DBZMOrRI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 Now the thoughtful bit and why I like thinking about that time. If I’m being honest looking back at the result now, I’m not sure I love it. But that doesn’t matter. When I think about this project I rarely think about the piece itself. I think about the process, how natural it was and how completely immersed I was when writing it. Everything just happened by itself, and at no point I had a master plan. I was messing around on the piano, then caught myself thinking it would be cool to add a flute, talked to a couple of people and boom - it happened. To me, that was real creativity - being completely consumed by an idea and just losing yourself in _doing_. It was one of the few times when I can genuinely say that I enjoyed the process more than the result. 
 
