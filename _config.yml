@@ -13,10 +13,10 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Ivan Bashkirov
-email: ivanbashkirov@example.com
-description: >- # this means to ignore newlines until "baseurl:"
-   Ivan Bashkirov portfolio and a personal blog.
+title: IVAN BASHKIROV (.com)
+email: ivanbashkirov@protonmail.com
+description: >-
+   the OFFICIAL personal homepage of ivan bashkirov. inventor of CHENNIS (chess+tennis). grade 8 piano with distinction.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://ivanbashkirov.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: ivanibash
@@ -24,7 +24,6 @@ github_username:  ivanbashkirov
 
 # Build settings
 markdown: kramdown
-theme: minima
 plugins:
   - jekyll-feed
 collections:

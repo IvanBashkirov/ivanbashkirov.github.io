@@ -3,24 +3,24 @@
 
   {%- include head.html -%}
 
-  <body>
+  <body class="chaos-body">
+
+    <div class="starfield"></div>
 
     {%- include header.html -%}
 
-        {{ content }}
+    <div class="page-wrap">
+      {{ content }}
+    </div>
 
     {%- include footer.html -%}
 
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-      integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
-      crossorigin="anonymous">
-    </script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js">
-    </script>
-    <script src="{{ "/assets/index.js" | relative_url }}">
-    </script>
+    <div class="corner-gif tl">&#9824;&#127934;</div>
+    <div class="corner-gif tr">&#127934;&#9827;</div>
+    <div class="corner-gif bl">&#9819;&#127934;</div>
+    <div class="corner-gif br">&#127934;&#9822;</div>
+
+    <script src="{{ '/assets/index.js' | relative_url }}"></script>
 
   </body>
 

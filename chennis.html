@@ -1,0 +1,52 @@
+---
+layout: default
+title: CHENNIS&trade; - the sport of the future
+permalink: /chennis.html
+---
+
+<main class="chennis-main">
+
+  <h1 class="chennis-title">CHENNIS&trade;</h1>
+  <p class="chennis-sub">&quot;the sport of the future&quot; &mdash; <i>ivan (inventor)</i></p>
+
+  <div class="chennis-rules">
+    <h3>&#128218; RULES OF CHENNIS (v0.3 UNSTABLE)</h3>
+    <ol>
+      <li>it is like tennis but with a chess piece as the ball</li>
+      <li>hit the <b class="knight-word">knight</b> over the net using ur paddle</li>
+      <li>if u miss the knight the other player gets a point</li>
+      <li>the knight moves faster each hit like a real horse</li>
+      <li>grade 8 piano with distinction gives +1 bonus (not implemented)</li>
+    </ol>
+  </div>
+
+  <div class="chennis-controls-info">
+    <p>&#127918; <b>CONTROLS:</b> move your mouse (or finger) on the court. ur paddle is at the bottom. the computer is at the top and is probably better than u</p>
+  </div>
+
+  <div class="chennis-court-wrap">
+    <div class="scorebox">
+      <div class="score-player"><span class="score-label">YOU:</span> <span id="playerScore">0</span></div>
+      <div class="vs-word">vs</div>
+      <div class="score-cpu"><span class="score-label">CPU:</span> <span id="cpuScore">0</span></div>
+    </div>
+    <canvas id="chennisCanvas" width="600" height="480"></canvas>
+    <div class="chennis-buttons">
+      <button id="startBtn" class="ridiculous-btn">&#9654; START CHENNIS</button>
+      <button id="resetBtn" class="ridiculous-btn alt">&#8635; RESET</button>
+    </div>
+    <p id="chennisStatus" class="chennis-status">press START to begin... (may not work)</p>
+  </div>
+
+  <div class="trophy-case">
+    <h3>&#127942; TROPHY CASE</h3>
+    <ul>
+      <li>&#127942; chennis world champion</li>
+      <li>&#127942; chennis player, tbilisi region, Q2</li>
+      <li>&#127911; grade 8 piano with distinction</li>
+    </ul>
+  </div>
+
+  <script src="{{ '/assets/chennis.js' | relative_url }}"></script>
+
+</main>
