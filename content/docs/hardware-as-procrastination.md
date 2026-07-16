@@ -1,6 +1,6 @@
 ---
 title: "Hardware as Procrastination"
-ref: "041"
+ref: "030"
 date: 2026-05-14
 kind: thought
 ---

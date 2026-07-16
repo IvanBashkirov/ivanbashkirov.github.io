@@ -1,6 +1,6 @@
 ---
 import { render } from 'astro:content';
-import { loadLog, loadProjects, groupByMonth, fmtDate } from '../lib/data';
+import { loadLog, loadProjects, groupByMonth, fmtDate, fmtDay } from '../lib/data';
 import { getVisibleDocs, getAllDocs, docBySlug, type Doc } from '../lib/docs';
 import DiskGlyph from './DiskGlyph.astro';
 
@@ -40,6 +40,12 @@ function diskMeta(d: Doc): [string, string] {
     `${fmtDate(d.dateStr)} · ${d.data.hidden ? '???' : d.sizeKB} KB`,
   ];
 }
+
+function projLinkLabel(link: string): string {
+  if (link.startsWith('/doc/')) return 'post-mortem';
+  if (link.startsWith('/')) return 'play';
+  return 'visit';
+}
 ---
 
 <div class="statusbar" aria-hidden="true">
@@ -50,162 +56,159 @@ function diskMeta(d: Doc): [string, string] {
   </span>
 </div>
 
-<div class="screen-scroll" id="screenScroll">
-  <section
-    class="panel"
-    id="panel-activity"
-    role="tabpanel"
-    aria-labelledby="tab-activity"
-    data-count={modeCounts.activity}
-    hidden={active !== 'activity'}
-  >
-    {
-      months.map((m) => (
-        <div class="month-group">
-          <div class="month-divider" aria-hidden="true">
-            //// {m.label}
-          </div>
-          <ol class="entries">
-            {m.items.map((e) => {
-              const doc = docBySlug(allDocs, e.doc);
-              return (
-                <li class="entry" data-type={e.type} data-doc={doc ? doc.url : undefined}>
-                  <span class="e-date">{fmtDate(e.date)}</span>
-                  <span class="e-tag">
-                    <span class={`tag tag-${e.type}`}>{TAGS[e.type]}</span>
-                  </span>
-                  <span class="e-body">
-                    <span class="e-n">Nº{String(e.n).padStart(2, '0')}</span>
-                    {e.text}
-                    {doc && (
-                      <>
-                        {' '}
-                        <a class="e-doc" href={doc.url} data-doc={doc.slug} data-kind={doc.data.kind}>
-                          DOC {doc.data.ref}
-                          <DiskGlyph />
-                        </a>
-                      </>
-                    )}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
+<section
+  class="panel"
+  id="panel-activity"
+  role="tabpanel"
+  aria-labelledby="tab-activity"
+  data-count={modeCounts.activity}
+  hidden={active !== 'activity'}
+>
+  {
+    months.map((m) => (
+      <div class="month-group">
+        <div class="month-divider" aria-hidden="true">
+          {m.label}
         </div>
-      ))
-    }
-  </section>
-
-  <section
-    class="panel"
-    id="panel-projects"
-    role="tabpanel"
-    aria-labelledby="tab-projects"
-    data-count={modeCounts.projects}
-    hidden={active !== 'projects'}
-  >
-    <ol class="channels">
-      {
-        projects.map((p) => (
-          <li class="chan" data-status={p.status}>
-            <span class="c-ch">CH {p.ch}</span>
-            <span class="c-name">{p.link ? <a href={p.link}>{p.name}</a> : p.name}</span>
-            <span class="c-desc">{p.desc}</span>
-            <span class="c-year">{p.year}</span>
-            <span class="c-status">
-              {p.status === 'rec' && (
-                <span class="vu" aria-hidden="true">
-                  <i /><i /><i />
-                </span>
-              )}
-              <span class="st">{p.status.toUpperCase()}</span>
-            </span>
-          </li>
-        ))
-      }
-    </ol>
-    <p class="legend">REC recording · OUT shipped · MUTE struck off · STBY standby</p>
-  </section>
-
-  <section
-    class="panel"
-    id="panel-writing"
-    role="tabpanel"
-    aria-labelledby="tab-writing"
-    data-count={modeCounts.writing}
-    hidden={active !== 'writing'}
-  >
-    <div class="diskbox-wrap">
-      <div class="diskbox-title" aria-hidden="true">//// DISK BOX</div>
-      <ul class="diskbox">
-        {
-          visibleDocs.map((d) => {
-            const [m1, m2] = diskMeta(d);
+        <ol class="entries">
+          {m.items.map((e) => {
+            const doc = docBySlug(allDocs, e.doc);
             return (
-              <li>
-                <a class="disk" href={d.url} data-doc={d.slug} data-kind={d.data.kind}>
-                  <span class="label">
-                    <span class="d-title">{d.data.title}</span>
-                    <span class="d-meta">
-                      {m1}
-                      <br />
-                      {m2}
-                    </span>
-                  </span>
-                </a>
+              <li class="entry" data-type={e.type}>
+                <div class="meta">
+                  <span class="e-date">{fmtDay(e.date)}</span>
+                  <span class={`tag tag-${e.type}`}>{TAGS[e.type]}</span>
+                  <span class="e-n">Nº {String(e.n).padStart(3, '0')}</span>
+                </div>
+                <p class="line">{e.text}</p>
+                {doc && (
+                  <a class="attach" href={doc.url} data-doc={doc.slug} data-kind={doc.data.kind}>
+                    attached: “{doc.data.title}”<DiskGlyph />
+                  </a>
+                )}
               </li>
             );
-          })
-        }
-        {
-          hiddenTune && (
-            <li id="hiddenDisk" hidden>
+          })}
+        </ol>
+      </div>
+    ))
+  }
+</section>
+
+<section
+  class="panel"
+  id="panel-projects"
+  role="tabpanel"
+  aria-labelledby="tab-projects"
+  data-count={modeCounts.projects}
+  hidden={active !== 'projects'}
+>
+  <div class="month-divider" aria-hidden="true">CHANNELS</div>
+  <ol class="channels">
+    {
+      projects.map((p) => (
+        <li class="chan" data-status={p.status}>
+          <span class="c-st">{p.status.toUpperCase()}</span>
+          <div class="c-body">
+            <h3>{p.name}</h3>
+            {p.status === 'rec' && (
+              <span class="vu" aria-hidden="true">
+                <i /><i /><i />
+              </span>
+            )}
+            <p class="c-desc">{p.desc}</p>
+            {p.link && (
               <a
-                class="disk"
-                href={hiddenTune.url}
-                data-doc={hiddenTune.slug}
-                data-kind={hiddenTune.data.kind}
+                class="attach"
+                href={p.link}
+                data-doc={p.link.startsWith('/doc/') ? p.link.split('/')[2] : undefined}
+                data-kind={p.link.startsWith('/doc/') ? 'essay' : undefined}
               >
+                {projLinkLabel(p.link)}
+              </a>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  <p class="legend">REC recording · OUT shipped · MUTE struck off · STBY standby</p>
+</section>
+
+<section
+  class="panel"
+  id="panel-writing"
+  role="tabpanel"
+  aria-labelledby="tab-writing"
+  data-count={modeCounts.writing}
+  hidden={active !== 'writing'}
+>
+  <div class="diskbox-wrap">
+    <div class="diskbox-title" aria-hidden="true">DISK BOX</div>
+    <ul class="diskbox">
+      {
+        visibleDocs.map((d) => {
+          const [m1, m2] = diskMeta(d);
+          return (
+            <li>
+              <a class="disk" href={d.url} data-doc={d.slug} data-kind={d.data.kind}>
                 <span class="label">
-                  <span class="d-title">{hiddenTune.data.title}</span>
+                  <span class="d-title">{d.data.title}</span>
                   <span class="d-meta">
-                    DOC ??? · TUNE
+                    {m1}
                     <br />
-                    {fmtDate(hiddenTune.dateStr)} · ??? KB
+                    {m2}
                   </span>
                 </span>
               </a>
             </li>
-          )
-        }
-      </ul>
-    </div>
-
-    <div class="thought-stream">
-      {
-        thoughtMonths.map((m) => (
-          <div class="month-group">
-            <div class="month-divider" aria-hidden="true">
-              //// {m.label}
-            </div>
-            {m.items.map(({ doc, Content }) => (
-              <article class="t-entry entry-like" data-type="txt">
-                <div class="t-head">
-                  {fmtDate(doc.dateStr)} · <span class="tag tag-txt">TXT</span> ·{' '}
-                  <span class="t-title">{doc.data.title}</span> ·{' '}
-                  <a href={doc.url} data-doc={doc.slug} data-kind="thought">
-                    DOC {doc.data.ref}
-                    <DiskGlyph />
-                  </a>
-                </div>
-                <div class="t-body">
-                  <Content />
-                </div>
-              </article>
-            ))}
-          </div>
-        ))
+          );
+        })
       }
-    </div>
-  </section>
-</div>
+      {
+        hiddenTune && (
+          <li id="hiddenDisk" hidden>
+            <a
+              class="disk"
+              href={hiddenTune.url}
+              data-doc={hiddenTune.slug}
+              data-kind={hiddenTune.data.kind}
+            >
+              <span class="label">
+                <span class="d-title">{hiddenTune.data.title}</span>
+                <span class="d-meta">
+                  DOC ??? · TUNE
+                  <br />
+                  {fmtDate(hiddenTune.dateStr)} · ??? KB
+                </span>
+              </span>
+            </a>
+          </li>
+        )
+      }
+    </ul>
+  </div>
+
+  <div class="thought-stream">
+    {
+      thoughtMonths.map((m) => (
+        <div class="month-group">
+          <div class="month-divider" aria-hidden="true">
+            {m.label}
+          </div>
+          {m.items.map(({ doc, Content }) => (
+            <article class="t-entry" data-type="txt">
+              <div class="meta">
+                <span class="e-date">{fmtDay(doc.dateStr)}</span>
+                <span class="tag tag-note">THOUGHT</span>
+              </div>
+              <div class="t-body">
+                <Content />
+              </div>
+            </article>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</section>

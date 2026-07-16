@@ -24,14 +24,15 @@ function show(): void {
   if (!el) return;
   const b = document.body.dataset;
   const uptime = b.london ? daysSince(b.london) : '???';
-  el.innerHTML = `
+  el.innerHTML = `<div class="tm-inner">
     <div class="testmode-title">IB-01 TEST MODE</div>
     <div class="testmode-line">UPTIME SINCE LONDON: ${uptime} DAYS</div>
     <div class="testmode-line">ENTRIES: ${b.entries ?? '??'}</div>
     <div class="testmode-line">TUNES LOGGED: ${b.tunes ?? '??'}</div>
     <div class="testmode-line">RESEARCH HOURS: [REDACTED]</div>
     <div class="testmode-line">WARRANTY: VOID — SEE FRONT LABEL</div>
-    <div class="testmode-line" style="margin-top:14px">ESC TO EXIT</div>`;
+    <div class="testmode-line" style="margin-top:14px">ESC TO EXIT</div>
+  </div>`;
   el.classList.add('show');
 }
 

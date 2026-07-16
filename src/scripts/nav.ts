@@ -21,8 +21,18 @@ function modeFor(path: string): string | null {
   return null;
 }
 
+/** LCD brightness flick on mode change (mockup behavior). */
+function flickScreen(): void {
+  const screen = $('#screen');
+  if (!screen || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  screen.classList.remove('flick');
+  void screen.offsetWidth; // restart animation
+  screen.classList.add('flick');
+}
+
 export function activate(m: string, push = true): void {
   if (!hasPanels() || !ROUTES[m]) return;
+  if (document.body.dataset.mode !== m) flickScreen();
   for (const id of Object.keys(ROUTES)) {
     const panel = $(`#panel-${id}`);
     const tab = $(`#tab-${id}`);
@@ -109,6 +119,18 @@ export function initNav(): void {
       activate(m, true);
     });
   }
+
+  // roving arrows on the tablist (mockup behavior)
+  $('.modes')?.addEventListener('keydown', (e) => {
+    const ke = e as KeyboardEvent;
+    if (ke.key !== 'ArrowRight' && ke.key !== 'ArrowLeft') return;
+    const keys = $$('.mode-key');
+    const i = keys.indexOf(document.activeElement as HTMLElement);
+    if (i < 0) return;
+    const next = keys[(i + (ke.key === 'ArrowRight' ? 1 : keys.length - 1)) % keys.length];
+    next.focus();
+    next.click();
+  });
 
   // rear affordances
   $('#rearLink')?.addEventListener('click', (e) => {

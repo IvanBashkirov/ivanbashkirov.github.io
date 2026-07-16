@@ -100,7 +100,7 @@ const tabs = [
 
           <header class="top-panel">
             <div class="brand">
-              <div class="brand-name">IVAN BASHKIROV<b class="brand-model">IB-01</b></div>
+              <div class="brand-name">IVAN BASHKIROV <b class="brand-model">IB-01</b></div>
               <div class="tagline">SHIPPING LOG · CODE / ESSAYS / TUNES · TBILISI</div>
             </div>
             <div class="counter-block">
@@ -113,15 +113,24 @@ const tabs = [
                 <span class="digits" id="counterDigits" aria-hidden="true"
                   >{String(days).padStart(2, '0')}</span
                 >
-                <span class:list={['rec', { on: building }]} aria-hidden="true">
+                <span
+                  class:list={['rec', { on: building }]}
+                  aria-hidden="true"
+                  title="REC — currently building"
+                >
                   <span class="rec-led"></span>
-                  <span class="rec-label">REC</span>
                 </span>
               </div>
               <div class="counter-caption" id="counterCaption">
-                {fresh
-                  ? 'DAYS SINCE LAST SHIPMENT · FRESH'
-                  : 'DAYS SINCE LAST SHIPMENT · REC = CURRENTLY BUILDING'}
+                {
+                  fresh ? (
+                    'DAYS SINCE LAST SHIPMENT · FRESH'
+                  ) : (
+                    <>
+                      DAYS SINCE LAST SHIPMENT · <b>REC</b> = CURRENTLY BUILDING
+                    </>
+                  )
+                }
               </div>
             </div>
           </header>

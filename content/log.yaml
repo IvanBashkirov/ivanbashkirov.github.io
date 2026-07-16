@@ -28,150 +28,149 @@
   text: "Moved to Tbilisi. Third city in ten years. The piano survived the move; several convictions did not."
 
 - n: 6
-  date: 2025-01-30
+  date: 2025-02-04
   type: ship
-  text: "GameTok v1.0 live on the App Store. Short-form video for game discovery. Now we wait for the users."
-  project: gametok
+  text: "MacNoSleep 1.0 — a menu-bar utility that keeps the Mac awake. Built in a week for my own laptop, shipped because it was finished. A sequence worth repeating."
+  project: macnosleep
 
 - n: 7
+  date: 2025-02-23
+  type: note
+  text: "The Butterfly learned by ear on the penny whistle. A slip jig in 9/8, which the hands accepted before the head did. First tune in the log."
+  project: tunes
+
+- n: 8
+  date: 2025-03-30
+  type: note
+  text: "Started PAWND.IO. A chess magazine you can lose at. The scope is absurd and entirely deliberate."
+  project: pawnd
+
+- n: 9
   date: 2025-04-23
   type: ship
   text: "Rebuilt the site around chennis. Playable. Regrettable."
   project: site
 
-- n: 8
-  date: 2025-08-14
-  type: note
-  text: "GameTok retention chart continues to resemble the floor. Fourth onboarding redesign underway."
-  project: gametok
-
-- n: 9
-  date: 2025-11-06
-  type: note
-  text: "Ran the year's numbers on GameTok. 212 downloads, three weekly actives, two of which are my test devices."
-  project: gametok
-
 - n: 10
-  date: 2026-01-08
+  date: 2025-05-18
   type: note
-  text: "Decision made. GameTok winds down. The market was asked fourteen different ways and the answer was consistent."
-  project: gametok
-
-- n: 11
-  date: 2026-01-19
-  type: note
-  text: "GameTok delisted from the App Store. Zero complaints received, which is the whole problem."
-  project: gametok
-
-- n: 12
-  date: 2026-01-27
-  type: note
-  text: "Filed the strike-off application. The form took eleven minutes. The company took a year."
-  project: gametok
-
-- n: 13
-  date: 2026-02-03
-  type: note
-  text: "Registered as an individual entrepreneur in Georgia. 1% tax on turnover. The state and I agree that my operation is small."
-
-- n: 14
-  date: 2026-02-12
-  type: txt
-  text: "Wrote the GameTok post-mortem. Striking off a company teaches things the launch never did."
-  doc: striking-off-gametok
-  project: gametok
-
-- n: 15
-  date: 2026-02-18
-  type: ship
-  text: "Tune 01 logged. 6/8, A minor, ends because the take ended."
+  text: "Out on the Ocean learned at the session, by ear, the only way it is offered. The B part took three weeks longer than advertised."
   project: tunes
 
-- n: 16
-  date: 2026-02-25
+- n: 11
+  date: 2025-06-10
+  type: ship
+  text: "PAWND.IO live. Multiplayer chess with an editorial masthead. You can read a feature and then lose to a stranger without leaving the page."
+  project: pawnd
+
+- n: 12
+  date: 2025-07-06
+  type: ship
+  text: "OneMic pilot published. A pseudo-live talk show hosted by an AI called Wavelength. Wavelength interrupted the guest twice. Filed as personality, not bug."
+  project: onemic
+
+- n: 13
+  date: 2025-08-03
+  type: ship
+  text: "MacNoSleep 1.1 — keep-awake while a named app is running. One setting added, two requested, one of them correct."
+  project: macnosleep
+
+- n: 14
+  date: 2025-08-24
   type: note
-  text: "Tune 02 logged. Slip jig in 9/8. The metronome and I have agreed to differ."
+  text: "The Kesh up to a speed the session would call sociable. Every whistle player learns it. No exemption form was found."
+  project: tunes
+
+- n: 15
+  date: 2025-09-14
+  type: ship
+  text: "First PAWND.IO editorial issue. Three features and a puzzle. The magazine now exists in the way magazines do, which is to say late."
+  project: pawnd
+
+- n: 16
+  date: 2025-10-26
+  type: note
+  text: "Morrison's Jig learned by ear. The piano keeps offering chords. The whistle has declined them."
   project: tunes
 
 - n: 17
-  date: 2026-03-04
+  date: 2025-11-12
   type: note
-  text: "New project. Autosampler: stems in, labelled sample pack out. Scope kept deliberately embarrassing."
-  project: autosampler
+  text: "OneMic shelved after four episodes. The format wants a pipeline I will not run alone. Sleeping, not dead. Probably."
+  project: onemic
 
 - n: 18
-  date: 2026-03-08
-  type: txt
-  text: "Wrote about practice logs versus shipping logs, and how I kept the wrong one for years."
-  doc: practice-logs-vs-shipping-logs
+  date: 2025-12-07
+  type: ship
+  text: "PAWND.IO puzzle engine shipped. Daily positions pulled from games played on the site, including, unavoidably, mine."
+  project: pawnd
 
 - n: 19
-  date: 2026-03-13
-  type: ship
-  text: "Tune 03 logged. Reel in D major, faster than intended, kept anyway."
+  date: 2025-12-21
+  type: note
+  text: "Banish Misfortune learned for the end of the year, on the strength of the title. Three parts, D mixolydian, no measurable effect on fortune yet."
   project: tunes
 
 - n: 20
-  date: 2026-03-17
+  date: 2026-01-05
   type: note
-  text: "Autosampler transient detection works on drums and is confidently wrong about everything else."
-  project: autosampler
+  text: "New project. GameTok: a TikTok-style swipe arcade for iOS. A vertical feed of instantly playable micro-games. The pitch fits in one sentence, which I have decided to read as a good sign."
+  project: gametok
 
 - n: 21
-  date: 2026-03-24
+  date: 2026-01-24
   type: ship
-  text: "Tune 04 logged. E dorian, recorded on the phone, room noise now considered part of the arrangement."
-  project: tunes
+  text: "PAWND.IO winter issue — four features and an endgame column. The magazine arm now publishes on a schedule the game arm envies."
+  project: pawnd
 
 - n: 22
-  date: 2026-03-31
+  date: 2026-02-08
   type: ship
-  text: "Autosampler CLI slices a stem at the onsets and writes files with honest names. kick_probably_01.wav."
-  project: autosampler
+  text: "GameTok swipe feed running on device. Five micro-games, sub-second handoff between them. The swipe already feels dangerous, which is the business model."
+  project: gametok
 
 - n: 23
-  date: 2026-04-02
-  type: txt
-  text: "Wrote about the difference between a demo and a product. Autosampler is currently the former."
-  doc: a-demo-is-not-a-product
-  project: autosampler
-
-- n: 24
-  date: 2026-04-09
+  date: 2026-02-22
   type: note
-  text: "Tune 05 logged. Waltz in G major, suspiciously cheerful. Under observation."
+  text: "Cooley's Reel learned at half speed. The session plays it at a speed I currently attend rather than join."
   project: tunes
 
+- n: 24
+  date: 2026-03-10
+  type: ship
+  text: "GameTok working v1 — feed, ten micro-games, scores, streaks. Each game loads like a video and plays like a dare. The hard part works."
+  project: gametok
+
 - n: 25
-  date: 2026-04-14
+  date: 2026-03-14
   type: note
-  text: "Pitch detection added to Autosampler. It believes everything is E. Investigating whether everything is, in fact, E."
+  text: "Sketched Autosampler over a weekend: stems in, labelled sample pack out. Parked before it could become an excuse not to finish GameTok."
   project: autosampler
 
 - n: 26
-  date: 2026-04-21
-  type: ship
-  text: "Tune 06 logged. Hornpipe in B minor. The B section borrows heavily from the A section."
-  project: tunes
+  date: 2026-04-02
+  type: txt
+  text: "Wrote about the difference between a demo and a product. Autosampler is the former, on purpose and on a shelf."
+  doc: a-demo-is-not-a-product
+  project: autosampler
 
 - n: 27
-  date: 2026-04-26
-  type: txt
-  text: "Wrote about why the tunes live in the same log as the code. One list, one standard."
-  doc: tunes-in-the-log
-  project: tunes
+  date: 2026-04-11
+  type: ship
+  text: "GameTok 1.0 live on the App Store. Approved on the first pass. Now the feed waits for thumbs."
+  project: gametok
 
 - n: 28
-  date: 2026-05-01
+  date: 2026-04-26
   type: note
-  text: "Chennis remains playable at /chennis. No maintenance required. Easily the most reliable thing I have shipped."
-  project: chennis
+  text: "The Blarney Pilgrim learned over two Sundays. The third part is the whole argument for the tune."
+  project: tunes
 
 - n: 29
   date: 2026-05-06
-  type: ship
-  text: "Autosampler now sorts output into drums, bass and other. Two of the three categories can be trusted."
-  project: autosampler
+  type: note
+  text: "GameTok week-three numbers. Downloads respectable, day-two retention a coin flip, day-seven a rounding error. The swipe works. The coming back does not."
+  project: gametok
 
 - n: 30
   date: 2026-05-14
@@ -180,101 +179,100 @@
   doc: hardware-as-procrastination
 
 - n: 31
-  date: 2026-05-19
-  type: ship
-  text: "Tune 07 logged. 3/4, D mixolydian, unreleased like the others."
-  project: tunes
+  date: 2026-05-20
+  type: note
+  text: "Registered as an individual entrepreneur in Georgia. One percent tax on turnover, declared monthly. The state and I agree that my operation is small."
 
 - n: 32
-  date: 2026-05-26
+  date: 2026-05-28
   type: note
-  text: "Tune 08 logged. 4/4 in F, written to test Autosampler and kept for unrelated reasons."
-  project: tunes
+  text: "Third onboarding redesign shipped into GameTok. The retention chart absorbed it without comment. Charts are honest like that."
+  project: gametok
 
 - n: 33
-  date: 2026-05-29
-  type: note
-  text: "First outside tester fed Autosampler a full mix instead of stems. It labelled the entire song 'other'. Fair."
+  date: 2026-06-03
+  type: ship
+  text: "Autosampler picked back up. The slicer cuts a stem at the onsets and writes files with honest names. kick_probably_01.wav."
   project: autosampler
 
 - n: 34
-  date: 2026-06-03
-  type: ship
-  text: "Tune 09 logged. Slow air in G. Took four takes to sound like one."
-  project: tunes
+  date: 2026-06-07
+  type: note
+  text: "Decision made. GameTok winds down, with cause. The market was asked fourteen different ways and the answer was consistent."
+  project: gametok
 
 - n: 35
   date: 2026-06-11
-  type: txt
-  text: "Wrote about research as the socially acceptable form of hiding. The slicer shipped unchanged."
-  doc: research-is-hiding
-  project: autosampler
+  type: note
+  text: "GameTok delisted and the strike-off application filed. The form took eleven minutes. The company took six months."
+  project: gametok
 
 - n: 36
-  date: 2026-06-16
-  type: ship
-  text: "Autosampler exports a zipped pack with a manifest. The manifest is the part I am proudest of, which says something."
-  project: autosampler
+  date: 2026-06-13
+  type: note
+  text: "ChallengeClub begins as phone calls. Discovery calls Nº 1 through 3 with gym and fitness creators. The rule: three paid commitments before a single line of production code."
+  project: challengeclub
 
 - n: 37
-  date: 2026-06-21
-  type: ship
-  text: "Tune 10 logged. One take, penny whistle involved. Filed under a name I will not repeat here."
-  project: tunes
+  date: 2026-06-15
+  type: note
+  text: "Discovery calls Nº 4 through 6. Two polite maybes and one coach who asked about price unprompted, which is the most interesting thing anyone has said yet."
+  project: challengeclub
 
 - n: 38
-  date: 2026-06-25
-  type: note
-  text: "Priced Autosampler at nine dollars. Nothing about it justifies this yet. That is partly the point."
-  project: autosampler
-
-- n: 39
-  date: 2026-06-30
+  date: 2026-06-16
   type: ship
-  text: "Tune 11 logged. 7/8, because apparently we do that now."
-  project: tunes
-
-- n: 40
-  date: 2026-07-03
-  type: note
-  text: "Payment link wired up. Tested it with my own card, which technically counts as revenue and morally does not."
-  project: autosampler
-
-- n: 41
-  date: 2026-07-05
-  type: txt
-  text: "Wrote about Georgia's 1% tax regime and what 'founder' means when the whole company is one person."
-  doc: the-1-percent-founder
-
-- n: 42
-  date: 2026-07-08
-  type: ship
-  text: "Tune 12 logged. Twelve logged, zero released. The ratio is stable."
-  project: tunes
-
-- n: 43
-  date: 2026-07-10
-  type: note
-  text: "Autosampler landing page written. One paragraph, one price, one button. The second paragraph was removed for overpromising."
-  project: autosampler
-
-- n: 44
-  date: 2026-07-12
-  type: ship
-  text: "IB-01 went live. The personal site now presents as rack hardware and refers to posts as documents."
+  text: "This log. The site you are reading is itself entry Nº 038, which is either elegant or a paradox."
   project: site
 
-- n: 45
-  date: 2026-07-13
+- n: 39
+  date: 2026-06-19
   type: note
-  text: "Autosampler v0.1 cut. Known issues: fourteen. Documented issues: fourteen. Shipping anyway."
-  project: autosampler
+  text: "First Georgian tax declaration filed. One percent. Still grinning."
+
+- n: 40
+  date: 2026-06-24
+  type: ship
+  text: "MacNoSleep 1.2 — caffeinate schedules, because the Mac also under-ships when it's asleep."
+  project: macnosleep
+
+- n: 41
+  date: 2026-06-28
+  type: txt
+  text: "\"Striking off GameTok\" — a post-mortem, written while it still stings."
+  doc: striking-off-gametok
+  project: gametok
+
+- n: 42
+  date: 2026-07-02
+  type: ship
+  text: "PAWND.IO spectate mode — watch live boards without an account."
+  project: pawnd
+
+- n: 43
+  date: 2026-07-05
+  type: txt
+  text: "\"The 1% Founder\" — what Georgia's tax regime does to indie maths, and to excuses."
+  doc: the-1-percent-founder
+
+- n: 44
+  date: 2026-07-08
+  type: note
+  text: "Sí Bheag, Sí Mhór up to session tempo on the whistle. The log counts tunes. The log has always counted tunes."
+  project: tunes
+
+- n: 45
+  date: 2026-07-10
+  type: ship
+  text: "ChallengeClub pre-sale page and call booking flow. There is no product behind it. That is the point."
+  project: challengeclub
 
 - n: 46
-  date: 2026-07-14
-  type: note
-  text: "Release checklist completed. The checklist was one item."
-  project: autosampler
+  date: 2026-07-12
+  type: txt
+  text: "Discovery call Nº 7 for ChallengeClub, with a hypertrophy coach. Wrote up what a real \"yes\" sounds like — and what a polite \"no\" dressed as a \"yes\" sounds like."
+  doc: what-a-real-yes-sounds-like
+  project: challengeclub
 
 - n: 47
   date: 2026-07-14

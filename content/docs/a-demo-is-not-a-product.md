@@ -1,6 +1,6 @@
 ---
 title: "A Demo Is Not a Product"
-ref: "036"
+ref: "026"
 date: 2026-04-02
 kind: thought
 ---

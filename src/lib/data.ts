@@ -74,6 +74,12 @@ export function fmtDate(dateStr: string): string {
   return `${d} ${MON[Number(m) - 1]} ${y}`;
 }
 
+/** '2026-07-14' -> '14 JUL' (the month divider carries the year) */
+export function fmtDay(dateStr: string): string {
+  const [, m, d] = dateStr.split('-');
+  return `${d} ${MON[Number(m) - 1]}`;
+}
+
 /** '2026-07-14' -> 'JULY 2026' */
 export function monthLabel(dateStr: string): string {
   const [y, m] = dateStr.split('-');

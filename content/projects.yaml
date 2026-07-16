@@ -1,44 +1,37 @@
 - ch: "01"
-  name: AUTOSAMPLER
+  name: CHALLENGECLUB
   status: rec
-  desc: "stems in, labelled sample pack out"
+  desc: "Monetisation platform for gym & fitness creators. Held behind a pre-sales gate: three paid commitments before a single line of production code."
   year: "2026"
 
 - ch: "02"
-  name: IB-01 SITE
-  status: out
-  desc: "this website, presenting as rack hardware"
+  name: AUTOSAMPLER
+  status: rec
+  desc: "Stems in, labelled sample pack out. For producers who dig faster than they organise. First paying users."
   year: "2026"
 
 - ch: "03"
-  name: GAMETOK
-  status: mute
-  desc: "short-form video for game discovery; struck off the register"
+  name: PAWND.IO
+  status: out
+  desc: "A chess magazine you can lose at. Multiplayer, editorial, ongoing — the operator's most developed folly."
+  link: https://pawnd.io
   year: "2025–26"
 
 - ch: "04"
-  name: CHENNIS
+  name: MACNOSLEEP
   status: out
-  desc: "chess plus tennis; playable, inexplicably"
-  link: /chennis
+  desc: "A menu-bar utility that keeps Macs awake and honest. Small, done, useful."
   year: "2025"
 
 - ch: "05"
-  name: NEKTAR PACER SCRIPT
-  status: out
-  desc: "Ableton Live control surface script for a foot controller"
-  link: https://github.com/IvanBashkirov/Ableton-Live-MIDI-Remote-Scripts/tree/Nektar_Pacer
-  year: "2020"
+  name: GAMETOK
+  status: mute
+  desc: "TikTok-style swipe arcade for iOS. Working v1 built, then killed with cause. The log is honest about its dead."
+  link: /doc/striking-off-gametok
+  year: "2026"
 
 - ch: "06"
-  name: A PERFECT DREAM
-  status: out
-  desc: "orchestral cover of a metalcore track, recorded in Edinburgh"
-  link: /doc/the-perfect-dream
-  year: "2019"
-
-- ch: "07"
-  name: TUNES
+  name: ONEMIC
   status: stby
-  desc: "12 logged, 0 released"
-  year: "2026"
+  desc: "A pseudo-live talk show with an AI host called Wavelength. Sleeping, not dead. Probably."
+  year: "2025"

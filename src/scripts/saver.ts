@@ -20,20 +20,27 @@ export function initSaver(): void {
 
   const tick = () => {
     if (!active) return;
-    const bounds = screen.getBoundingClientRect();
+    // bounce within the viewport-visible band of the (possibly tall) screen
+    const r = screen.getBoundingClientRect();
+    const bandTop = Math.max(0, -r.top);
+    const bandBottom = Math.min(r.height, window.innerHeight - r.top);
     const bw = block.offsetWidth;
     const bh = block.offsetHeight;
+    if (bandBottom - bandTop < bh + 10) {
+      raf = requestAnimationFrame(tick);
+      return;
+    }
     x += vx;
     y += vy;
     let cornerHit = 0;
-    if (x <= 0 || x + bw >= bounds.width) {
+    if (x <= 0 || x + bw >= r.width) {
       vx = -vx;
-      x = Math.max(0, Math.min(x, bounds.width - bw));
+      x = Math.max(0, Math.min(x, r.width - bw));
       cornerHit++;
     }
-    if (y <= 0 || y + bh >= bounds.height) {
+    if (y <= bandTop || y + bh >= bandBottom) {
       vy = -vy;
-      y = Math.max(0, Math.min(y, bounds.height - bh));
+      y = Math.max(bandTop, Math.min(y, bandBottom - bh));
       cornerHit++;
     }
     if (cornerHit === 2) {

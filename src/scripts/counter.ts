@@ -1,7 +1,7 @@
 import { $, reduced } from './util';
 
 const FRESH_CAPTION = 'DAYS SINCE LAST SHIPMENT · FRESH';
-const REC_CAPTION = 'DAYS SINCE LAST SHIPMENT · REC = CURRENTLY BUILDING';
+const REC_CAPTION = 'DAYS SINCE LAST SHIPMENT · <b>REC</b> = CURRENTLY BUILDING';
 
 let days = 0;
 let booting = false;
@@ -48,7 +48,7 @@ function render(): void {
       document.body.dataset.building === '1' ? '. Currently building.' : '.'
     }`
   );
-  if (caption) caption.textContent = days === 0 ? FRESH_CAPTION : REC_CAPTION;
+  if (caption) caption.innerHTML = days === 0 ? FRESH_CAPTION : REC_CAPTION;
 }
 
 /** Show all-segments-on during boot; restore with a 1-frame flash after. */
