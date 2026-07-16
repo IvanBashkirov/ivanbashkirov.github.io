@@ -92,6 +92,7 @@ body[data-mode='rear'] .unit:not(.flip-closed) .face-rear {
   transition: visibility 0s 0s;
 }
 
+.unit.flipped,
 body[data-mode='rear'] .unit { transform: rotateY(180deg); }
 body[data-mode='rear'] .face-front { visibility: hidden; }
 html.js body[data-mode='rear'] .face-front { visibility: visible; }
