@@ -22,6 +22,8 @@ function revealDisk(): void {
 }
 
 function unlock(): void {
+  // nothing to unlock when no hidden disk is on file (empty device)
+  if (!document.getElementById('hiddenDisk')) return;
   if (unlocked()) return;
   try {
     localStorage.setItem(UNLOCK_KEY, '1');

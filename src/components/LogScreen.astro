@@ -64,6 +64,7 @@ function projLinkLabel(link: string): string {
   data-count={modeCounts.activity}
   hidden={active !== 'activity'}
 >
+  {log.length === 0 && <p class="empty-state">LOG EMPTY · NOTHING HAS SHIPPED YET · THE COUNTER IS WAITING</p>}
   {
     months.map((m) => (
       <div class="month-group">
@@ -104,6 +105,7 @@ function projLinkLabel(link: string): string {
   hidden={active !== 'projects'}
 >
   <div class="month-divider" aria-hidden="true">CHANNELS</div>
+  {projects.length === 0 && <p class="empty-state">NO CHANNELS PATCHED</p>}
   <ol class="channels">
     {
       projects.map((p) => (
@@ -145,7 +147,10 @@ function projLinkLabel(link: string): string {
 >
   <div class="diskbox-wrap">
     <div class="diskbox-title" aria-hidden="true">DISK BOX</div>
-    <ul class="diskbox">
+    {visibleDocs.length === 0 && !hiddenTune && (
+      <p class="empty-state">DISK BOX EMPTY · NO DOCS ON FILE</p>
+    )}
+    <ul class="diskbox" hidden={visibleDocs.length === 0 && !hiddenTune}>
       {
         visibleDocs.map((d) => {
           const [m1, m2] = diskMeta(d);

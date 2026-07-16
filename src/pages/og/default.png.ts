@@ -4,6 +4,6 @@ import { ogDefault } from '../../lib/og';
 
 export const GET: APIRoute = async () => {
   const ship = latestShip(loadLog());
-  const png = await ogDefault(daysSince(ship?.date ?? '2026-01-01'));
+  const png = await ogDefault(ship ? daysSince(ship.date) : null);
   return new Response(png, { headers: { 'Content-Type': 'image/png' } });
 };

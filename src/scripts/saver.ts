@@ -1,7 +1,7 @@
 /* Screensaver (§5.2): after 90s idle on log modes, DVD-logo physics on the LCD. */
 
 import { $, isLogPage, reduced } from './util';
-import { dayCount } from './counter';
+import { dayLabel } from './counter';
 
 const IDLE_MS = 90_000;
 
@@ -56,7 +56,7 @@ export function initSaver(): void {
   const start = () => {
     if (active || document.hidden) return;
     active = true;
-    block.textContent = `IB-01 · ${dayCount()}`;
+    block.textContent = `IB-01 · ${dayLabel()}`;
     overlay.classList.add('show');
     raf = requestAnimationFrame(tick);
   };

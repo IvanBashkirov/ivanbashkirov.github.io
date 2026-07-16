@@ -155,8 +155,8 @@ export function ogForDoc(d: OgDoc): Promise<Uint8Array> {
   return render(tree);
 }
 
-/** Site-wide OG: the device front with the day counter. */
-export function ogDefault(days: number): Promise<Uint8Array> {
+/** Site-wide OG: the device front with the day counter ('--' when nothing has shipped). */
+export function ogDefault(days: number | null): Promise<Uint8Array> {
   const tree = h(
     'div',
     {
@@ -207,7 +207,7 @@ export function ogDefault(days: number): Promise<Uint8Array> {
                 h(
                   'div',
                   { fontFamily: 'Doto', fontWeight: 900, fontSize: 84, color: days === 0 ? '#4CBB6C' : '#E03A2F', display: 'flex' },
-                  String(days).padStart(2, '0')
+                  days === null ? '--' : String(days).padStart(2, '0')
                 ),
               ]
             ),

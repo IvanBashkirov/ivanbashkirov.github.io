@@ -43,16 +43,16 @@ export function loadSite(): SiteMeta {
   return { ...s, londonDeparture: normalizeDate(s.londonDeparture) };
 }
 
-/** Entries sorted newest-first. */
+/** Entries sorted newest-first. Empty log ships an empty device. */
 export function loadLog(): LogEntry[] {
-  const raw = parse(read('log.yaml')) as (LogEntry & { date: unknown })[];
+  const raw = (parse(read('log.yaml')) ?? []) as (LogEntry & { date: unknown })[];
   return raw
     .map((e) => ({ ...e, date: normalizeDate(e.date) }))
     .sort((a, b) => (a.date === b.date ? b.n - a.n : b.date.localeCompare(a.date)));
 }
 
 export function loadProjects(): Project[] {
-  return parse(read('projects.yaml')) as Project[];
+  return (parse(read('projects.yaml')) ?? []) as Project[];
 }
 
 export const latestShip = (log: LogEntry[]) => log.find((e) => e.type === 'ship');

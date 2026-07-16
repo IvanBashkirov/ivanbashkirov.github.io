@@ -24,8 +24,8 @@ const projects = loadProjects();
 const docs = await getVisibleDocs();
 
 const ship = latestShip(log);
-const shipDate = ship?.date ?? '2026-01-01';
-const days = daysSince(shipDate);
+// with an empty log there is nothing to count from — the display shows '--'
+const days = ship ? daysSince(ship.date) : null;
 const building = projects.some((p) => p.status === 'rec');
 const isEink = mode === 'doc' || mode === 'thought';
 // /rear's front face is the activity page, so it gets the full log control set
@@ -33,11 +33,16 @@ const isLog = ['activity', 'projects', 'writing', 'rear'].includes(mode);
 const tabMode = mode === 'rear' ? 'activity' : mode;
 const fresh = days === 0;
 
-const desc = description ?? `Ivan Bashkirov's public shipping log. Code, essays, tunes. Tbilisi. Days since last shipment: ${days}.`;
+const desc =
+  description ??
+  `Ivan Bashkirov's public shipping log. Code, essays, tunes. Tbilisi.${days === null ? '' : ` Days since last shipment: ${days}.`}`;
 const og = new URL(ogImage ?? '/og/default.png', Astro.site);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
-const counterLabel = `${days} day${days === 1 ? '' : 's'} since last shipment${building ? '. Currently building.' : '.'}`;
+const counterLabel =
+  days === null
+    ? `No shipments logged yet${building ? '. Currently building.' : '.'}`
+    : `${days} day${days === 1 ? '' : 's'} since last shipment${building ? '. Currently building.' : '.'}`;
 
 const tabs = [
   { id: 'activity', label: 'ACTIVITY', href: '/', count: log.length },
@@ -84,7 +89,7 @@ const tabs = [
   <body
     data-mode={mode}
     data-eink={isEink ? '' : undefined}
-    data-ship={shipDate}
+    data-ship={ship?.date}
     data-building={building ? '1' : '0'}
     data-entries={log.length}
     data-tunes={site.tunesLogged}
@@ -111,7 +116,7 @@ const tabs = [
                 aria-label={counterLabel}
               >
                 <span class="digits" id="counterDigits" aria-hidden="true"
-                  >{String(days).padStart(2, '0')}</span
+                  >{days === null ? '--' : String(days).padStart(2, '0')}</span
                 >
                 <span
                   class:list={['rec', { on: building }]}
