@@ -1,0 +1,24 @@
+---
+import Device from '../layouts/Device.astro';
+---
+
+<Device mode="error" title="DISK ERROR — IB-01" noindex>
+  <div class="error-screen">
+    <div class="err-title">DISK ERROR</div>
+    <p class="err-sub">DOC NOT FOUND IN BAY</p>
+    <div class="err-actions">
+      <button class="err-btn" id="errRetry">[ RETRY ]</button>
+      <a class="err-btn" href="/">[ ABORT ]</a>
+      <button class="err-btn" id="errIgnore">[ IGNORE ]</button>
+    </div>
+    <p class="err-ignored" id="errIgnored" hidden>IGNORED: <span id="errIgnoredN">0</span> TIMES</p>
+  </div>
+</Device>
+
+<style>
+  /* 404 uses the LCD screen chrome without the log status bar */
+  :global(body[data-mode='error'] .screen) {
+    height: auto;
+    min-height: 340px;
+  }
+</style>

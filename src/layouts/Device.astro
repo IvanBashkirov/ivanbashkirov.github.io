@@ -1,0 +1,318 @@
+---
+import '@fontsource/doto/latin-500.css';
+import '@fontsource/doto/latin-700.css';
+import '@fontsource/doto/latin-900.css';
+import '@fontsource/fragment-mono/latin-400.css';
+import '@fontsource/fragment-mono/latin-400-italic.css';
+import '../styles/device.css';
+import { loadSite, loadLog, loadProjects, latestShip, daysSince } from '../lib/data';
+import { getVisibleDocs } from '../lib/docs';
+
+interface Props {
+  mode: 'activity' | 'projects' | 'writing' | 'doc' | 'thought' | 'rear' | 'error';
+  title: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { mode, title, description, ogImage, noindex } = Astro.props;
+
+const site = loadSite();
+const log = loadLog();
+const projects = loadProjects();
+const docs = await getVisibleDocs();
+
+const ship = latestShip(log);
+const shipDate = ship?.date ?? '2026-01-01';
+const days = daysSince(shipDate);
+const building = projects.some((p) => p.status === 'rec');
+const isEink = mode === 'doc' || mode === 'thought';
+// /rear's front face is the activity page, so it gets the full log control set
+const isLog = ['activity', 'projects', 'writing', 'rear'].includes(mode);
+const tabMode = mode === 'rear' ? 'activity' : mode;
+const fresh = days === 0;
+
+const desc = description ?? `Ivan Bashkirov's public shipping log. Code, essays, tunes. Tbilisi. Days since last shipment: ${days}.`;
+const og = new URL(ogImage ?? '/og/default.png', Astro.site);
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const counterLabel = `${days} day${days === 1 ? '' : 's'} since last shipment${building ? '. Currently building.' : '.'}`;
+
+const tabs = [
+  { id: 'activity', label: 'ACTIVITY', href: '/', count: log.length },
+  { id: 'projects', label: 'PROJECTS', href: '/projects', count: projects.length },
+  { id: 'writing', label: 'WRITING', href: '/writing', count: docs.length },
+] as const;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" id="favicon" />
+    <link rel="alternate" type="application/rss+xml" title="IB-01 — docs feed" href="/feed.xml" />
+    <meta name="theme-color" content="#B7B5AE" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:image" content={og} />
+    <meta property="og:type" content={isEink ? 'article' : 'website'} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={`@${site.x}`} />
+    <script is:inline data-m={mode}>
+      document.documentElement.classList.add('js');
+      try {
+        if (
+          !sessionStorage.getItem('ib01-boot') &&
+          ['activity', 'projects', 'writing'].includes(document.currentScript.dataset.m) &&
+          !matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) {
+          document.documentElement.dataset.boot = '1';
+        }
+      } catch (e) {}
+    </script>
+    <style is:inline>
+      html[data-boot='1'] .overlay.boot { display: block; }
+    </style>
+  </head>
+  <body
+    data-mode={mode}
+    data-eink={isEink ? '' : undefined}
+    data-ship={shipDate}
+    data-building={building ? '1' : '0'}
+    data-entries={log.length}
+    data-tunes={site.tunesLogged}
+    data-london={site.londonDeparture}
+  >
+    <div class="scene">
+      <div class="unit" id="unit">
+        <main class="face face-front">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+
+          <header class="top-panel">
+            <div class="brand">
+              <div class="brand-name">IVAN BASHKIROV<b class="brand-model">IB-01</b></div>
+              <div class="tagline">SHIPPING LOG · CODE / ESSAYS / TUNES · TBILISI</div>
+            </div>
+            <div class="counter-block">
+              <div
+                class:list={['counter-window', { fresh }]}
+                id="counterWin"
+                role="img"
+                aria-label={counterLabel}
+              >
+                <span class="digits" id="counterDigits" aria-hidden="true"
+                  >{String(days).padStart(2, '0')}</span
+                >
+                <span class:list={['rec', { on: building }]} aria-hidden="true">
+                  <span class="rec-led"></span>
+                  <span class="rec-label">REC</span>
+                </span>
+              </div>
+              <div class="counter-caption" id="counterCaption">
+                {fresh
+                  ? 'DAYS SINCE LAST SHIPMENT · FRESH'
+                  : 'DAYS SINCE LAST SHIPMENT · REC = CURRENTLY BUILDING'}
+              </div>
+            </div>
+          </header>
+
+          <nav class="control-row" aria-label="Device controls">
+            <div class="modes" role={isLog ? 'tablist' : undefined} aria-label="Modes">
+              {
+                tabs.map((t) => (
+                  <a
+                    class="key mode-key"
+                    role={isLog ? 'tab' : undefined}
+                    id={`tab-${t.id}`}
+                    href={t.href}
+                    data-tab={t.id}
+                    aria-selected={isLog ? (tabMode === t.id ? 'true' : 'false') : undefined}
+                    aria-controls={isLog ? `panel-${t.id}` : undefined}
+                  >
+                    <span class="key-led" aria-hidden="true" />
+                    {t.label}
+                    <span class="key-count">{t.count}</span>
+                  </a>
+                ))
+              }
+            </div>
+            <span class="ctl-spacer"></span>
+            {
+              isLog && (
+                <>
+                  <div class="knob-group js-only">
+                    <div class="knob-labels" aria-hidden="true">
+                      <span class="active">ALL</span>
+                      <span>SHIP</span>
+                      <span>TXT</span>
+                      <span>NOTE</span>
+                    </div>
+                    <button
+                      class="knob"
+                      id="knob"
+                      role="slider"
+                      aria-label="Filter entries"
+                      aria-valuemin="0"
+                      aria-valuemax="3"
+                      aria-valuenow="0"
+                      aria-valuetext="All entries"
+                    >
+                      <span class="knob-cap" id="knobCap" style="transform: rotate(-22.5deg)" />
+                    </button>
+                    <div class="ctl-caption">FILTER</div>
+                  </div>
+                </>
+              )
+            }
+            <div class="snd-group js-only">
+              <button class="snd" id="snd" role="switch" aria-checked="false" aria-label="Sound">
+                <span class="snd-thumb"></span>
+              </button>
+              <div class="ctl-caption">SND OFF/ON</div>
+            </div>
+            {
+              isEink && (
+                <a class="eject-key" id="eject" href="/writing">
+                  ⏏ EJECT DOC
+                </a>
+              )
+            }
+          </nav>
+
+          <div class="bezel">
+            <div class:list={['screen', { lcd: !isEink }]} id="screen">
+              <slot />
+              {
+                !isEink && (
+                  <>
+                    <div class="overlay boot lcd-surface" id="boot" aria-hidden="true">
+                      <div class="boot-line">IB-01</div>
+                      <div class="boot-line">MEM CHECK ..... {log.length} ENTRIES OK</div>
+                      <div class="boot-line">DRIVE ......... READY</div>
+                      <div class="boot-line">DUTY .......... 1% PAID</div>
+                    </div>
+                    <div class="overlay saver lcd-surface" id="saver" aria-hidden="true">
+                      <div class="saver-block" id="saverBlock" />
+                    </div>
+                    <div class="overlay testmode lcd-surface" id="testmode" aria-hidden="true" />
+                  </>
+                )
+              }
+              <div class="overlay readout lcd-surface" id="readout" aria-hidden="true">
+                <div class="readout-text" id="readoutText"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="drive-row" aria-hidden="true">
+            <div class="drive-stack">
+              <div class="drive-slot" id="driveSlot"><div class="flap"></div></div>
+              <div class="drive-caption">DOC DRIVE · 3.5″ DD</div>
+            </div>
+            <div class="drive-led" id="driveLed"></div>
+          </div>
+
+          <footer class="bottom-panel">
+            <div class="spec">
+              IB-01 · {site.serial} · MADE IN TBILISI · DUTY PAID: 1% · @{site.x}
+              <a class="rear-link" id="rearLink" href="/rear">REAR ↻</a>
+            </div>
+            <div class="pads-group">
+              <div class="pads-hint" aria-hidden="true">TRY: ●●▲●</div>
+              <div class="pads">
+                {
+                  (['KCK', 'SNR', 'HAT', 'CBL'] as const).map((p) => (
+                    <span class="pad-cell">
+                      <button class="pad" data-pad={p.toLowerCase()} aria-label={`${p} pad`} />
+                      <span class="pad-label" aria-hidden="true">
+                        {p}
+                      </span>
+                    </span>
+                  ))
+                }
+              </div>
+            </div>
+            <div class="caution">⚠ PROLONGED RESEARCH WITHOUT SHIPPING VOIDS WARRANTY</div>
+          </footer>
+        </main>
+
+        <div class="face face-rear" id="rearFace">
+          <span class="screw s-tl" aria-hidden="true"></span>
+          <span class="screw s-tr" aria-hidden="true"></span>
+          <span class="screw s-bl" aria-hidden="true"></span>
+          <span class="screw s-br" aria-hidden="true"></span>
+          <div class="rear-inner">
+            <div class="rear-head">
+              <span class="rear-title">IB-01 — REAR PANEL</span>
+              <a class="rear-link" id="rearClose" href="/">FRONT ↻</a>
+            </div>
+
+            <div class="ports" aria-hidden="true">
+              <div class="port">
+                <div class="port-shape round"></div>
+                <span class="silk">PWR 9V ⎓ 300mA</span>
+              </div>
+              <div class="port">
+                <div class="port-shape usb"></div>
+                <span class="silk">USB · FIRMWARE — NEVER UPDATED</span>
+              </div>
+              <div class="port">
+                <div class="port-shape midi"></div>
+                <span class="silk">MIDI THRU (DECORATIVE)</span>
+              </div>
+            </div>
+
+            <div class="sticker" aria-hidden="true">
+              <div class="barcode"></div>
+              <div class="sn">IB-01 · {site.serial}</div>
+            </div>
+
+            <div class="regulatory">
+              THIS DEVICE COMPLIES WITH PART 1% OF THE TBILISI RULES. OPERATION IS SUBJECT TO THE
+              FOLLOWING CONDITION: THE OPERATOR MUST ACTUALLY SHIP.
+            </div>
+
+            <p class="rear-bio">{site.bio}</p>
+
+            <div class="rear-contacts">
+              <a href={`https://x.com/${site.x}`} rel="me">X — @{site.x}</a>
+              <a href={`mailto:${site.email}`}>EMAIL</a>
+              <a href={`https://github.com/${site.github}`} rel="me">GITHUB</a>
+              <a href="/feed.xml">RSS</a>
+            </div>
+
+            <table class="shortcuts">
+              <caption>OPERATOR SHORTCUTS — SILKSCREENED FOR YOUR CONVENIENCE</caption>
+              <tbody>
+                <tr><td>1 / 2 / 3</td><td>ACTIVITY / PROJECTS / WRITING</td></tr>
+                <tr><td>J / K</td><td>MOVE ENTRY CURSOR</td></tr>
+                <tr><td>ENTER</td><td>OPEN ATTACHED DOC</td></tr>
+                <tr><td>E</td><td>EJECT DOC</td></tr>
+                <tr><td>F</td><td>CYCLE FILTER KNOB</td></tr>
+                <tr><td>S</td><td>SOUND TOGGLE</td></tr>
+                <tr><td>?</td><td>REAR PANEL</td></tr>
+                <tr><td>ESC</td><td>BACK / DISMISS</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="flying-disk" hidden aria-hidden="true"></div>
+
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+- ch: "01"
+  name: AUTOSAMPLER
+  status: rec
+  desc: "stems in, labelled sample pack out"
+  year: "2026"
+
+- ch: "02"
+  name: IB-01 SITE
+  status: out
+  desc: "this website, presenting as rack hardware"
+  year: "2026"
+
+- ch: "03"
+  name: GAMETOK
+  status: mute
+  desc: "short-form video for game discovery; struck off the register"
+  year: "2025–26"
+
+- ch: "04"
+  name: CHENNIS
+  status: out
+  desc: "chess plus tennis; playable, inexplicably"
+  link: /chennis
+  year: "2025"
+
+- ch: "05"
+  name: NEKTAR PACER SCRIPT
+  status: out
+  desc: "Ableton Live control surface script for a foot controller"
+  link: https://github.com/IvanBashkirov/Ableton-Live-MIDI-Remote-Scripts/tree/Nektar_Pacer
+  year: "2020"
+
+- ch: "06"
+  name: A PERFECT DREAM
+  status: out
+  desc: "orchestral cover of a metalcore track, recorded in Edinburgh"
+  link: /doc/the-perfect-dream
+  year: "2019"
+
+- ch: "07"
+  name: TUNES
+  status: stby
+  desc: "12 logged, 0 released"
+  year: "2026"

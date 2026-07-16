@@ -1,0 +1,22 @@
+{
+  "name": "ib-01",
+  "description": "ivanbashkirov.com — personal shipping log as a piece of music hardware",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource/doto": "^5.2.10",
+    "@fontsource/fragment-mono": "^5.2.8",
+    "astro": "^5.18.2",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "satori": "^0.28.0"
+  }
+}

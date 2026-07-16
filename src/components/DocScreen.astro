@@ -1,0 +1,99 @@
+---
+import { render } from 'astro:content';
+import { fmtDate } from '../lib/data';
+import { getAllDocs, neighbours, type Doc } from '../lib/docs';
+
+interface Props {
+  doc: Doc;
+}
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+const all = await getAllDocs();
+const { prev, next } = doc.data.hidden ? {} : neighbours(all, doc.slug);
+
+const kind = doc.data.kind;
+const isTune = kind === 'tune';
+const isThought = kind === 'thought';
+const kicker = `${kind.toUpperCase()} · DOC ${doc.data.ref} · ${fmtDate(doc.dateStr)}`;
+const hudTitle = `DOC ${doc.data.ref} · ${doc.data.title.toUpperCase()}`;
+---
+
+<div class="hud" id="hud" aria-hidden="true">
+  <span class="hud-left">{hudTitle}</span>
+  <span class="hud-right">
+    <span class="hud-blocks" id="hudBlocks">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </span>
+    <span class="hud-pct" id="hudPct">0%</span>
+  </span>
+</div>
+
+<article class="doc" data-slug={doc.slug} data-kind={kind}>
+  <header class="doc-head">
+    <div class="doc-kicker">
+      {isThought && <span class={'mini-disk'} style="background: var(--disk-thought)"></span>}
+      {isTune && <span class={'mini-disk'} style="background: var(--disk-tune)"></span>}
+      {kicker}
+    </div>
+    <h1 class="doc-title">{doc.data.title}</h1>
+    {doc.data.standfirst && <p class="standfirst">{doc.data.standfirst}</p>}
+    <div class="doc-meta">
+      {doc.minutes} MIN READ · {doc.words} WORDS · {doc.data.hidden ? '???' : doc.sizeKB} KB
+    </div>
+  </header>
+
+  {
+    isTune && (
+      <div class="tape" id="tape">
+        <div class="tape-window" aria-hidden="true">
+          <div class="spool left" />
+          <div class="tape-counter" id="tapeCounter">000</div>
+          <div class="spool right" />
+        </div>
+        <div class="tape-controls">
+          <button class="t-btn" id="tapePlay" aria-pressed="false">
+            ▶ PLAY
+          </button>
+          <button class="t-btn" id="tapeStop">
+            ■ STOP
+          </button>
+        </div>
+        <noscript>
+          <p style="color:#dcdad3; font-size: 12px; text-align:center; margin-top: 12px;">
+            TAPE TRANSPORT REQUIRES JS. THE TUNE REMAINS THEORETICAL.
+          </p>
+        </noscript>
+      </div>
+    )
+  }
+
+  <div class="doc-body">
+    <Content />
+  </div>
+
+  <div class="end-of-doc" aria-hidden="true">—— END OF DOC ——</div>
+
+  {
+    (prev || next) && (
+      <nav class="doc-nav" aria-label="Adjacent docs">
+        {prev ? (
+          <a href={prev.url} class="prev-doc">
+            <span class="dir">← PREV DOC {prev.data.ref}</span>
+            <span class="doc-nav-title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {next ? (
+          <a href={next.url} class="next-doc">
+            <span class="dir">NEXT DOC {next.data.ref} →</span>
+            <span class="doc-nav-title">{next.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+      </nav>
+    )
+  }
+</article>

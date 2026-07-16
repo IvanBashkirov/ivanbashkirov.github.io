@@ -1,0 +1,284 @@
+- n: 1
+  date: 2019-07-28
+  type: txt
+  text: "Wrote up part one of what two years at Taxi for Email taught me. Shipping, Scrum, and liking colleagues on purpose."
+  doc: first-job-pt-1
+
+- n: 2
+  date: 2019-08-04
+  type: txt
+  text: "Part two of the first-job debrief. Technical debt, arguments, and going home on time."
+  doc: first-job-pt-2
+
+- n: 3
+  date: 2019-08-09
+  type: txt
+  text: "Posted a six-year-old orchestral cover of a metalcore track and wrote a thoughtful piece to justify it."
+  doc: the-perfect-dream
+
+- n: 4
+  date: 2020-10-25
+  type: ship
+  text: "Nektar Pacer control surface script for Ableton Live. Clips, scenes, arm, solo, mute, LED feedback. The documentation the device should have come with."
+  doc: nektar-pacer-script
+
+- n: 5
+  date: 2024-02-16
+  type: note
+  text: "Moved to Tbilisi. Third city in ten years. The piano survived the move; several convictions did not."
+
+- n: 6
+  date: 2025-01-30
+  type: ship
+  text: "GameTok v1.0 live on the App Store. Short-form video for game discovery. Now we wait for the users."
+  project: gametok
+
+- n: 7
+  date: 2025-04-23
+  type: ship
+  text: "Rebuilt the site around chennis. Playable. Regrettable."
+  project: site
+
+- n: 8
+  date: 2025-08-14
+  type: note
+  text: "GameTok retention chart continues to resemble the floor. Fourth onboarding redesign underway."
+  project: gametok
+
+- n: 9
+  date: 2025-11-06
+  type: note
+  text: "Ran the year's numbers on GameTok. 212 downloads, three weekly actives, two of which are my test devices."
+  project: gametok
+
+- n: 10
+  date: 2026-01-08
+  type: note
+  text: "Decision made. GameTok winds down. The market was asked fourteen different ways and the answer was consistent."
+  project: gametok
+
+- n: 11
+  date: 2026-01-19
+  type: note
+  text: "GameTok delisted from the App Store. Zero complaints received, which is the whole problem."
+  project: gametok
+
+- n: 12
+  date: 2026-01-27
+  type: note
+  text: "Filed the strike-off application. The form took eleven minutes. The company took a year."
+  project: gametok
+
+- n: 13
+  date: 2026-02-03
+  type: note
+  text: "Registered as an individual entrepreneur in Georgia. 1% tax on turnover. The state and I agree that my operation is small."
+
+- n: 14
+  date: 2026-02-12
+  type: txt
+  text: "Wrote the GameTok post-mortem. Striking off a company teaches things the launch never did."
+  doc: striking-off-gametok
+  project: gametok
+
+- n: 15
+  date: 2026-02-18
+  type: ship
+  text: "Tune 01 logged. 6/8, A minor, ends because the take ended."
+  project: tunes
+
+- n: 16
+  date: 2026-02-25
+  type: note
+  text: "Tune 02 logged. Slip jig in 9/8. The metronome and I have agreed to differ."
+  project: tunes
+
+- n: 17
+  date: 2026-03-04
+  type: note
+  text: "New project. Autosampler: stems in, labelled sample pack out. Scope kept deliberately embarrassing."
+  project: autosampler
+
+- n: 18
+  date: 2026-03-08
+  type: txt
+  text: "Wrote about practice logs versus shipping logs, and how I kept the wrong one for years."
+  doc: practice-logs-vs-shipping-logs
+
+- n: 19
+  date: 2026-03-13
+  type: ship
+  text: "Tune 03 logged. Reel in D major, faster than intended, kept anyway."
+  project: tunes
+
+- n: 20
+  date: 2026-03-17
+  type: note
+  text: "Autosampler transient detection works on drums and is confidently wrong about everything else."
+  project: autosampler
+
+- n: 21
+  date: 2026-03-24
+  type: ship
+  text: "Tune 04 logged. E dorian, recorded on the phone, room noise now considered part of the arrangement."
+  project: tunes
+
+- n: 22
+  date: 2026-03-31
+  type: ship
+  text: "Autosampler CLI slices a stem at the onsets and writes files with honest names. kick_probably_01.wav."
+  project: autosampler
+
+- n: 23
+  date: 2026-04-02
+  type: txt
+  text: "Wrote about the difference between a demo and a product. Autosampler is currently the former."
+  doc: a-demo-is-not-a-product
+  project: autosampler
+
+- n: 24
+  date: 2026-04-09
+  type: note
+  text: "Tune 05 logged. Waltz in G major, suspiciously cheerful. Under observation."
+  project: tunes
+
+- n: 25
+  date: 2026-04-14
+  type: note
+  text: "Pitch detection added to Autosampler. It believes everything is E. Investigating whether everything is, in fact, E."
+  project: autosampler
+
+- n: 26
+  date: 2026-04-21
+  type: ship
+  text: "Tune 06 logged. Hornpipe in B minor. The B section borrows heavily from the A section."
+  project: tunes
+
+- n: 27
+  date: 2026-04-26
+  type: txt
+  text: "Wrote about why the tunes live in the same log as the code. One list, one standard."
+  doc: tunes-in-the-log
+  project: tunes
+
+- n: 28
+  date: 2026-05-01
+  type: note
+  text: "Chennis remains playable at /chennis. No maintenance required. Easily the most reliable thing I have shipped."
+  project: chennis
+
+- n: 29
+  date: 2026-05-06
+  type: ship
+  text: "Autosampler now sorts output into drums, bass and other. Two of the three categories can be trusted."
+  project: autosampler
+
+- n: 30
+  date: 2026-05-14
+  type: txt
+  text: "Wrote about buying hardware as procrastination. A sampler was not purchased. This is the news."
+  doc: hardware-as-procrastination
+
+- n: 31
+  date: 2026-05-19
+  type: ship
+  text: "Tune 07 logged. 3/4, D mixolydian, unreleased like the others."
+  project: tunes
+
+- n: 32
+  date: 2026-05-26
+  type: note
+  text: "Tune 08 logged. 4/4 in F, written to test Autosampler and kept for unrelated reasons."
+  project: tunes
+
+- n: 33
+  date: 2026-05-29
+  type: note
+  text: "First outside tester fed Autosampler a full mix instead of stems. It labelled the entire song 'other'. Fair."
+  project: autosampler
+
+- n: 34
+  date: 2026-06-03
+  type: ship
+  text: "Tune 09 logged. Slow air in G. Took four takes to sound like one."
+  project: tunes
+
+- n: 35
+  date: 2026-06-11
+  type: txt
+  text: "Wrote about research as the socially acceptable form of hiding. The slicer shipped unchanged."
+  doc: research-is-hiding
+  project: autosampler
+
+- n: 36
+  date: 2026-06-16
+  type: ship
+  text: "Autosampler exports a zipped pack with a manifest. The manifest is the part I am proudest of, which says something."
+  project: autosampler
+
+- n: 37
+  date: 2026-06-21
+  type: ship
+  text: "Tune 10 logged. One take, penny whistle involved. Filed under a name I will not repeat here."
+  project: tunes
+
+- n: 38
+  date: 2026-06-25
+  type: note
+  text: "Priced Autosampler at nine dollars. Nothing about it justifies this yet. That is partly the point."
+  project: autosampler
+
+- n: 39
+  date: 2026-06-30
+  type: ship
+  text: "Tune 11 logged. 7/8, because apparently we do that now."
+  project: tunes
+
+- n: 40
+  date: 2026-07-03
+  type: note
+  text: "Payment link wired up. Tested it with my own card, which technically counts as revenue and morally does not."
+  project: autosampler
+
+- n: 41
+  date: 2026-07-05
+  type: txt
+  text: "Wrote about Georgia's 1% tax regime and what 'founder' means when the whole company is one person."
+  doc: the-1-percent-founder
+
+- n: 42
+  date: 2026-07-08
+  type: ship
+  text: "Tune 12 logged. Twelve logged, zero released. The ratio is stable."
+  project: tunes
+
+- n: 43
+  date: 2026-07-10
+  type: note
+  text: "Autosampler landing page written. One paragraph, one price, one button. The second paragraph was removed for overpromising."
+  project: autosampler
+
+- n: 44
+  date: 2026-07-12
+  type: ship
+  text: "IB-01 went live. The personal site now presents as rack hardware and refers to posts as documents."
+  project: site
+
+- n: 45
+  date: 2026-07-13
+  type: note
+  text: "Autosampler v0.1 cut. Known issues: fourteen. Documented issues: fourteen. Shipping anyway."
+  project: autosampler
+
+- n: 46
+  date: 2026-07-14
+  type: note
+  text: "Release checklist completed. The checklist was one item."
+  project: autosampler
+
+- n: 47
+  date: 2026-07-14
+  type: ship
+  text: "Autosampler v0.1 — stems in, labelled sample pack out. A stranger paid actual money."
+  doc: charging-money-before-its-ready
+  project: autosampler

@@ -1,0 +1,23 @@
+---
+import Device from '../../layouts/Device.astro';
+import DocScreen from '../../components/DocScreen.astro';
+import { getAllDocs, type Doc } from '../../lib/docs';
+
+export async function getStaticPaths() {
+  const docs = await getAllDocs();
+  return docs
+    .filter((d) => d.data.kind === 'thought')
+    .map((doc) => ({ params: { slug: doc.slug }, props: { doc } }));
+}
+
+const { doc } = Astro.props as { doc: Doc };
+---
+
+<Device
+  mode="thought"
+  title={`${doc.data.title} — DOC ${doc.data.ref} · IB-01`}
+  description={doc.data.standfirst ?? `A thought from the IB-01 shipping log.`}
+  ogImage={`/og/${doc.slug}.png`}
+>
+  <DocScreen doc={doc} />
+</Device>
