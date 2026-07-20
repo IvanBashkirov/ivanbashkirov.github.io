@@ -13,7 +13,7 @@ export const reduced = (): boolean => matchMedia('(prefers-reduced-motion: reduc
 export const mode = (): string => document.body.dataset.mode ?? '';
 
 export const isLogPage = (): boolean =>
-  ['activity', 'projects', 'writing', 'rear'].includes(mode());
+  ['activity', 'projects', 'writing', 'notes', 'rear'].includes(mode());
 
 export const isEink = (): boolean => document.body.hasAttribute('data-eink');
 

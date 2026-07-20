@@ -10,8 +10,9 @@ runtime so they update the instant you save — no rebuild:
 - **STATUS** — the "NOW" strip on the front panel: a preset (working, workout,
   eating, travelling, vacation, at a session, sleeping, offline — each with a
   glyph) plus optional free text ("leg day", "exploring Athens").
-- **THOUGHTS** — the short-thought stream on the WRITING panel. A couple of
-  sentences with minimal markdown (bold, italic, code, links).
+- **FEED** — short thoughts (the NOTE screen, with minimal markdown) and
+  activities (untagged lines in the activity log). Either can carry a link,
+  which makes the entry clickable on the device.
 
 Both are edited at **`/admin`** on the live site, behind a login only you have.
 Until Firebase is configured, the site simply shows no status and no thoughts.
@@ -70,7 +71,7 @@ Data model in Firestore:
 | Collection | Document id | Fields |
 | --- | --- | --- |
 | `status` | `current` (single doc) | preset (see `src/lib/status-presets.ts`), note? (free text), updated (ISO) |
-| `thoughts` | random uuid | date (`YYYY-MM-DD`), text (mini-markdown), created (ISO) |
+| `thoughts` | random uuid | date (`YYYY-MM-DD`), text (mini-markdown), kind (`thought`/`activity`), link? (URL), created (ISO) |
 
 Adding a preset later = one line in `src/lib/status-presets.ts` (id, glyph,
 label); the admin picker and the front panel both read from it.

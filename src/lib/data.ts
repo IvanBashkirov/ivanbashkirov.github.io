@@ -24,7 +24,6 @@ export interface Project {
 export interface SiteMeta {
   title: string;
   domain: string;
-  serial: string;
   email: string;
   x: string;
   github: string;

@@ -190,13 +190,20 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
 .digits {
   font-family: var(--doto);
   font-weight: 900;
-  font-size: 40px;
+  font-size: 30px;
   line-height: 1;
   color: var(--led-red);
   text-shadow: 0 0 8px rgba(224, 58, 47, 0.55);
   letter-spacing: 0.06em;
-  min-width: 2ch;
+  min-width: 4.4ch;
   text-align: center;
+}
+
+.digits .colon { animation: colonblink 2s steps(1) infinite; }
+
+@keyframes colonblink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
 }
 
 .counter-window.fresh .digits {
@@ -534,6 +541,22 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
 }
 
 .entries { list-style: none; }
+
+/* runtime entries with a link: the whole entry is clickable */
+a.entry-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+a.entry-link .line::after,
+a.entry-link .t-body p:last-child::after {
+  content: ' ↗';
+  color: var(--lcd-dim);
+}
+
+a.entry-link:hover .line,
+a.entry-link:hover .t-body p { text-decoration: underline; }
 
 .entry, .t-entry {
   padding: 13px 0 14px;
@@ -1099,9 +1122,15 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
   text-transform: uppercase;
 }
 
-.ports { display: flex; gap: 26px; flex-wrap: wrap; margin-bottom: 28px; }
+.ports { display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 28px; }
 
-.port { text-align: center; }
+.port {
+  flex: 0 0 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
 
 .port-shape {
   width: 54px;
@@ -1148,7 +1177,7 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
     radial-gradient(circle 2px at 62% 70%, #55554e 98%, transparent);
 }
 
-.port .silk { display: block; max-width: 110px; }
+.port .silk { display: block; max-width: 132px; line-height: 1.6; }
 
 .sticker {
   display: inline-block;
@@ -1200,6 +1229,7 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
   color: var(--silk);
   margin-bottom: 24px;
   max-width: 56ch;
+  white-space: pre-line;
 }
 
 .rear-contacts { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; }

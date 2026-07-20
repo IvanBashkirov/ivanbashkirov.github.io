@@ -33,7 +33,7 @@ export function moveCursor(dir: 1 | -1): void {
 
 export function openCursor(): void {
   if (!current) return;
-  const link = $('a[data-doc]', current) as HTMLAnchorElement | null;
+  const link = $('a[data-doc], a.entry-link', current) as HTMLAnchorElement | null;
   link?.click();
 }
 

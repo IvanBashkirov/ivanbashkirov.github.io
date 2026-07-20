@@ -9,9 +9,11 @@ import { presetById, type OperatorStatus } from '../lib/status-presets';
 import { renderMini } from '../lib/mini-md';
 import { fmtDay, groupByMonth } from '../lib/dates';
 
-interface Thought {
+interface FeedItem {
   date: string; // YYYY-MM-DD
   text: string;
+  kind?: 'thought' | 'activity';
+  link?: string;
   created?: string;
 }
 
@@ -41,42 +43,95 @@ async function initNow() {
   strip.hidden = false;
 }
 
-async function initThoughts() {
+/** Anchor-wrap entry content when the item carries a link. */
+const linked = (item: FeedItem, inner: string) =>
+  item.link
+    ? `<a class="entry-link" href="${esc(item.link)}" rel="noopener">${inner}</a>`
+    : inner;
+
+function monthGroups(items: FeedItem[], renderItem: (t: FeedItem) => string): string {
+  return groupByMonth(items)
+    .map(
+      (m) => `<div class="month-group">
+        <div class="month-divider" aria-hidden="true">${esc(m.label)}</div>
+        ${m.items.map(renderItem).join('')}
+      </div>`
+    )
+    .join('');
+}
+
+function renderThoughts(thoughts: FeedItem[]) {
   const stream = document.getElementById('thoughtStream');
-  if (!stream) return;
+  if (!stream || !thoughts.length) return;
+  document.getElementById('notesEmpty')?.setAttribute('hidden', '');
+  stream.innerHTML = monthGroups(
+    thoughts,
+    (t) => `<article class="t-entry" data-type="txt">
+      <div class="meta">
+        <span class="e-date">${esc(fmtDay(t.date))}</span>
+        <span class="tag tag-note">THOUGHT</span>
+      </div>
+      ${linked(t, `<div class="t-body">${renderMini(t.text)}</div>`)}
+    </article>`
+  );
+  const panel = document.getElementById('panel-notes');
+  if (panel) panel.dataset.count = `${thoughts.length} NOTES`;
+}
+
+/** Activities appear untagged in the activity log, newest first. */
+function renderActivities(acts: FeedItem[]) {
+  const panel = document.getElementById('panel-activity');
+  if (!panel || !acts.length) return;
+  panel.querySelector('.empty-state')?.setAttribute('hidden', '');
+  const html = groupByMonth(acts)
+    .map(
+      (m) => `<div class="month-group">
+        <div class="month-divider" aria-hidden="true">${esc(m.label)}</div>
+        <ol class="entries">
+          ${m.items
+            .map(
+              (a) => `<li class="entry" data-type="live">
+                <div class="meta"><span class="e-date">${esc(fmtDay(a.date))}</span></div>
+                ${linked(a, `<p class="line">${esc(a.text)}</p>`)}
+              </li>`
+            )
+            .join('')}
+        </ol>
+      </div>`
+    )
+    .join('');
+  panel.insertAdjacentHTML('afterbegin', html);
+  const total = Number(panel.dataset.staticEntries ?? 0) + acts.length;
+  panel.dataset.count = `${total} ENTRIES`;
+}
+
+/** The status bar count may be stale after runtime entries land. */
+function refreshStatusInfo() {
+  const m = document.body.dataset.mode;
+  const panel = m && document.getElementById(`panel-${m}`);
+  const statusInfo = document.getElementById('statusInfo');
+  if (panel && statusInfo) statusInfo.textContent = `${panel.dataset.count} · PWR ∞`;
+}
+
+async function initFeed() {
+  if (!document.getElementById('thoughtStream')) return;
   const docs = await fetchCollection('thoughts');
-  const thoughts = docs
-    .map((d) => d.data as unknown as Thought)
+  const items = docs
+    .map((d) => d.data as unknown as FeedItem)
     .filter((t) => t.date && t.text)
     .sort((a, b) =>
       a.date === b.date
         ? (b.created ?? '').localeCompare(a.created ?? '')
         : b.date.localeCompare(a.date)
     );
-  if (!thoughts.length) return;
-  stream.innerHTML = groupByMonth(thoughts)
-    .map(
-      (m) => `<div class="month-group">
-        <div class="month-divider" aria-hidden="true">${esc(m.label)}</div>
-        ${m.items
-          .map(
-            (t) => `<article class="t-entry" data-type="txt">
-              <div class="meta">
-                <span class="e-date">${esc(fmtDay(t.date))}</span>
-                <span class="tag tag-note">THOUGHT</span>
-              </div>
-              <div class="t-body">${renderMini(t.text)}</div>
-            </article>`
-          )
-          .join('')}
-      </div>`
-    )
-    .join('');
+  renderThoughts(items.filter((t) => t.kind !== 'activity'));
+  renderActivities(items.filter((t) => t.kind === 'activity'));
+  refreshStatusInfo();
 }
 
 export function initLive() {
   if (!firebaseConfigured) return;
   // fire and forget — the static page is complete without either
   initNow().catch(() => {});
-  initThoughts().catch(() => {});
+  initFeed().catch(() => {});
 }

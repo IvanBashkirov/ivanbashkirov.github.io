@@ -1,29 +1,15 @@
-/* FILTER knob (§8.1): 4 detents, click to cycle, drag to rotate, keyboard slider. */
+/* MODE dial: 4 detents (ALL / PROJ / TXT / NOTE), click to cycle, drag to
+   rotate, keyboard slider. The dial is the device's only navigation. */
 
-import { $, $$, statusFlash } from './util';
+import { $, $$, mode } from './util';
+import { activate } from './nav';
 import * as sfx from './audio';
 
-const FILTERS = ['all', 'ship', 'txt', 'note'] as const;
-const LABELS = ['All entries', 'Shipments only', 'Written entries only', 'Notes only'];
+const MODES = ['activity', 'projects', 'writing', 'notes'] as const;
+const DIAL = ['ALL', 'PROJ', 'TXT', 'NOTE'];
+const LABELS = ['All — activity log', 'Projects', 'Writing — disk box', 'Notes'];
 
 let idx = 0;
-
-function applyFilter(): void {
-  const f = FILTERS[idx];
-  for (const panel of ['#panel-activity', '#panel-writing']) {
-    const root = $(panel);
-    if (!root) continue;
-    for (const el of $$('[data-type]', root)) {
-      el.classList.toggle('filtered-out', f !== 'all' && el.dataset.type !== f);
-    }
-    for (const group of $$('.month-group', root)) {
-      const anyVisible = $$('[data-type]', group).some(
-        (el) => !el.classList.contains('filtered-out')
-      );
-      group.classList.toggle('empty', !anyVisible);
-    }
-  }
-}
 
 function renderKnob(): void {
   const cap = $('#knobCap');
@@ -36,21 +22,32 @@ function renderKnob(): void {
   $$('.knob-labels span').forEach((s, i) => s.classList.toggle('active', i === idx));
 }
 
-export function setFilter(i: number, silent = false): void {
-  const next = ((i % FILTERS.length) + FILTERS.length) % FILTERS.length;
+export function setDial(i: number, silent = false): void {
+  const next = ((i % MODES.length) + MODES.length) % MODES.length;
   if (next === idx) return;
   idx = next;
   renderKnob();
-  applyFilter();
-  if (!silent) {
-    sfx.detent();
-    statusFlash(`FILTER: ${FILTERS[idx].toUpperCase()}`);
-  }
+  activate(MODES[idx]);
+  if (!silent) sfx.detent();
 }
 
-export const cycleFilter = (): void => setFilter(idx + 1);
+export const cycleDial = (): void => setDial(idx + 1);
 
 export function initKnob(): void {
+  // sync the dial with the mode this page loaded in
+  idx = Math.max(0, (MODES as readonly string[]).indexOf(mode()));
+  renderKnob();
+
+  // nav (keyboard shortcuts, history) may change mode behind the dial's back
+  document.addEventListener('ib01:mode', (e) => {
+    const m = (e as CustomEvent<string>).detail;
+    const i = (MODES as readonly string[]).indexOf(m);
+    if (i >= 0 && i !== idx) {
+      idx = i;
+      renderKnob();
+    }
+  });
+
   const knob = $('#knob');
   if (!knob) return;
 
@@ -73,7 +70,7 @@ export function initKnob(): void {
     const steps = Math.round(delta / 30);
     if (steps !== 0) moved = true;
     const target = Math.min(3, Math.max(0, dragBase + steps));
-    setFilter(target);
+    setDial(target);
   });
 
   knob.addEventListener('pointerup', () => (dragging = false));
@@ -84,22 +81,22 @@ export function initKnob(): void {
       moved = false;
       return; // drag already applied
     }
-    cycleFilter();
+    cycleDial();
   });
 
   knob.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
       e.preventDefault();
-      setFilter(Math.min(3, idx + 1));
+      setDial(Math.min(3, idx + 1));
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
       e.preventDefault();
-      setFilter(Math.max(0, idx - 1));
+      setDial(Math.max(0, idx - 1));
     } else if (e.key === 'Home') {
       e.preventDefault();
-      setFilter(0);
+      setDial(0);
     } else if (e.key === 'End') {
       e.preventDefault();
-      setFilter(3);
+      setDial(3);
     }
   });
 }

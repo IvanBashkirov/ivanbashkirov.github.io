@@ -27,7 +27,13 @@ import { presetById, type OperatorStatus } from '../lib/status-presets';
 import { renderMini } from '../lib/mini-md';
 import { fmtDate } from '../lib/dates';
 
-interface Thought { date: string; text: string; created: string; }
+interface FeedItem {
+  date: string;
+  text: string;
+  kind: 'thought' | 'activity';
+  link?: string;
+  created: string;
+}
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: string) =>
@@ -35,7 +41,7 @@ const esc = (s: string) =>
 const today = () => new Date().toISOString().slice(0, 10);
 
 let db: Firestore;
-let thoughts = new Map<string, Thought>(); // firestore id -> thought
+let thoughts = new Map<string, FeedItem>(); // firestore id -> feed item
 
 function flash(el: HTMLElement, msg: string, bad = false) {
   el.textContent = msg;
@@ -88,7 +94,7 @@ async function enter(user: User) {
     getDoc(doc(db, 'status', 'current')),
     getDocs(collection(db, 'thoughts')),
   ]);
-  thoughts = new Map(thoughtsSnap.docs.map((d) => [d.id, d.data() as Thought]));
+  thoughts = new Map(thoughtsSnap.docs.map((d) => [d.id, d.data() as FeedItem]));
 
   showCurrentStatus(statusSnap.exists() ? (statusSnap.data() as OperatorStatus) : null);
   resetThoughtForm();
@@ -174,10 +180,27 @@ $('statusClear').addEventListener('click', async () => {
 
 let editingThoughtId: string | null = null;
 
+function feedKind(): FeedItem['kind'] {
+  return (document.querySelector('#feedKind .seg-btn.active') as HTMLElement).dataset
+    .kind as FeedItem['kind'];
+}
+
+function setFeedKind(kind: string) {
+  document
+    .querySelectorAll<HTMLElement>('#feedKind .seg-btn')
+    .forEach((b) => b.classList.toggle('active', b.dataset.kind === kind));
+}
+
+document.querySelectorAll<HTMLButtonElement>('#feedKind .seg-btn').forEach((b) =>
+  b.addEventListener('click', () => setFeedKind(b.dataset.kind!))
+);
+
 function resetThoughtForm() {
   editingThoughtId = null;
-  $('thoughtFormTitle').textContent = 'POST A THOUGHT';
+  $('thoughtFormTitle').textContent = 'POST TO THE FEED';
+  setFeedKind('thought');
   ($('thoughtText') as HTMLTextAreaElement).value = '';
+  ($('thoughtLink') as HTMLInputElement).value = '';
   ($('thoughtDate') as HTMLInputElement).value = today();
   $('thoughtCancelEdit').hidden = true;
   $('thoughtPreview').hidden = true;
@@ -190,7 +213,9 @@ const sortedThoughts = () =>
 function renderThoughts() {
   $('thoughtList').innerHTML = sortedThoughts()
     .map(([id, t]) => `<li data-id="${esc(id)}"${id === editingThoughtId ? ' class="editing"' : ''}>
-      <span class="meta">${esc(fmtDate(t.date))}</span>
+      <span class="meta">${esc(fmtDate(t.date))}
+        <span class="tag ${t.kind === 'activity' ? 'tag-ship' : 'tag-note'}">${t.kind === 'activity' ? 'ACT' : 'THT'}</span>
+        ${t.link ? '<span class="tag tag-txt">LINK</span>' : ''}</span>
       <span class="body">${renderMini(t.text)}</span>
       <span class="acts"><button class="btn" data-act="edit">EDIT</button><button class="btn" data-act="del">DEL</button></span>
     </li>`)
@@ -213,10 +238,19 @@ $('thoughtCommit').addEventListener('click', async () => {
   const text = ($('thoughtText') as HTMLTextAreaElement).value.trim();
   const date = ($('thoughtDate') as HTMLInputElement).value;
   if (!text || !date) return flash(status, 'TEXT AND DATE REQUIRED', true);
+  const link = ($('thoughtLink') as HTMLInputElement).value.trim();
+  if (link && !/^(https?:\/\/|\/)/.test(link))
+    return flash(status, 'LINK MUST START WITH https:// OR /', true);
 
   const id = editingThoughtId ?? crypto.randomUUID();
   const existing = editingThoughtId ? thoughts.get(editingThoughtId) : undefined;
-  const thought: Thought = { date, text, created: existing?.created ?? new Date().toISOString() };
+  const thought: FeedItem = {
+    date,
+    text,
+    kind: feedKind(),
+    created: existing?.created ?? new Date().toISOString(),
+  };
+  if (link) thought.link = link;
   try {
     await setDoc(doc(db, 'thoughts', id), thought);
     thoughts.set(id, thought);
@@ -237,13 +271,15 @@ $('thoughtList').addEventListener('click', async (ev) => {
   const t = thoughts.get(id)!;
   if (btn.dataset.act === 'edit') {
     editingThoughtId = id;
-    $('thoughtFormTitle').textContent = `EDIT THOUGHT · ${fmtDate(t.date)}`;
+    $('thoughtFormTitle').textContent = `EDIT · ${fmtDate(t.date)}`;
+    setFeedKind(t.kind ?? 'thought');
     ($('thoughtText') as HTMLTextAreaElement).value = t.text;
+    ($('thoughtLink') as HTMLInputElement).value = t.link ?? '';
     ($('thoughtDate') as HTMLInputElement).value = t.date;
     $('thoughtCancelEdit').hidden = false;
     renderThoughts();
     $('thoughtText').focus();
-  } else if (confirm(`Delete this thought — "${t.text.slice(0, 60)}"?`)) {
+  } else if (confirm(`Delete this entry — "${t.text.slice(0, 60)}"?`)) {
     await deleteDoc(doc(db, 'thoughts', id));
     thoughts.delete(id);
     if (editingThoughtId === id) resetThoughtForm();

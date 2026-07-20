@@ -1,14 +1,19 @@
-/* Central keyboard dispatch (§7 chart): 1/2/3 · j/k · Enter · E · F · S · ? · Esc */
+/* Central keyboard dispatch (§7 chart): 1/2/3/4 · j/k · Enter · E · F · S · ? · Esc */
 
 import { isEink, isLogPage, isTyping } from './util';
 import { activate, flip, isFlipped } from './nav';
-import { cycleFilter } from './knob';
+import { cycleDial } from './knob';
 import { toggleSound } from './snd';
 import { moveCursor, openCursor } from './cursor';
 import { ejectDoc } from './disk';
 import { testModeClose, testModeOpen } from './konami';
 
-const MODE_KEYS: Record<string, string> = { '1': 'activity', '2': 'projects', '3': 'writing' };
+const MODE_KEYS: Record<string, string> = {
+  '1': 'activity',
+  '2': 'projects',
+  '3': 'writing',
+  '4': 'notes',
+};
 
 export function initKeys(): void {
   window.addEventListener('keydown', (e) => {
@@ -24,6 +29,7 @@ export function initKeys(): void {
       case '1':
       case '2':
       case '3':
+      case '4':
         if (isLogPage() && !isFlipped()) activate(MODE_KEYS[e.key]);
         break;
       case 'j':
@@ -39,7 +45,7 @@ export function initKeys(): void {
         if (isEink()) ejectDoc();
         break;
       case 'f':
-        if (isLogPage() && !isFlipped()) cycleFilter();
+        if (isLogPage() && !isFlipped()) cycleDial();
         break;
       case 's':
         toggleSound();

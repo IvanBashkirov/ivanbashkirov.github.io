@@ -4,7 +4,7 @@ import { getVisibleDocs, getAllDocs, docBySlug, type Doc } from '../lib/docs';
 import DiskGlyph from './DiskGlyph.astro';
 
 interface Props {
-  active: 'activity' | 'projects' | 'writing';
+  active: 'activity' | 'projects' | 'writing' | 'notes';
 }
 
 const { active } = Astro.props;
@@ -23,6 +23,7 @@ const modeCounts = {
   activity: `${log.length} ENTRIES`,
   projects: `${projects.length} CHANNELS`,
   writing: `${visibleDocs.length} DOCS`,
+  notes: 'LIVE FEED',
 };
 
 function diskMeta(d: Doc): [string, string] {
@@ -53,9 +54,9 @@ function projLinkLabel(link: string): string {
 <section
   class="panel"
   id="panel-activity"
-  role="tabpanel"
-  aria-labelledby="tab-activity"
+  aria-label="Activity log"
   data-count={modeCounts.activity}
+  data-static-entries={log.length}
   hidden={active !== 'activity'}
 >
   {log.length === 0 && <p class="empty-state">LOG EMPTY · NOTHING HAS SHIPPED YET · THE COUNTER IS WAITING</p>}
@@ -93,8 +94,7 @@ function projLinkLabel(link: string): string {
 <section
   class="panel"
   id="panel-projects"
-  role="tabpanel"
-  aria-labelledby="tab-projects"
+  aria-label="Projects"
   data-count={modeCounts.projects}
   hidden={active !== 'projects'}
 >
@@ -134,8 +134,7 @@ function projLinkLabel(link: string): string {
 <section
   class="panel"
   id="panel-writing"
-  role="tabpanel"
-  aria-labelledby="tab-writing"
+  aria-label="Writing"
   data-count={modeCounts.writing}
   hidden={active !== 'writing'}
 >
@@ -188,6 +187,17 @@ function projLinkLabel(link: string): string {
     </ul>
   </div>
 
+</section>
+
+<section
+  class="panel"
+  id="panel-notes"
+  aria-label="Notes"
+  data-count={modeCounts.notes}
+  hidden={active !== 'notes'}
+>
+  <div class="month-divider" aria-hidden="true">NOTES</div>
+  <p class="empty-state" id="notesEmpty">FEED OFFLINE · NOTHING ON AIR</p>
   <!-- short thoughts live in Firestore; populated at runtime -->
   <div class="thought-stream" id="thoughtStream"></div>
 </section>

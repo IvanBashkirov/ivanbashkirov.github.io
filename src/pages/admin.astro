@@ -55,7 +55,7 @@ import { STATUS_PRESETS } from '../lib/status-presets';
       <main id="console" hidden>
         <nav class="tabs" role="tablist">
           <button class="tab active" data-tab="status" role="tab" aria-selected="true">STATUS</button>
-          <button class="tab" data-tab="thoughts" role="tab" aria-selected="false">THOUGHTS</button>
+          <button class="tab" data-tab="thoughts" role="tab" aria-selected="false">FEED</button>
         </nav>
 
         <!-- STATUS: what the operator is doing right now -->
@@ -85,13 +85,23 @@ import { STATUS_PRESETS } from '../lib/status-presets';
           </div>
         </section>
 
-        <!-- THOUGHTS: the quick stream -->
+        <!-- FEED: short thoughts + activity-log entries -->
         <section class="pane" id="pane-thoughts" role="tabpanel" hidden>
           <div class="card quickpad">
-            <h2 id="thoughtFormTitle">POST A THOUGHT</h2>
+            <h2 id="thoughtFormTitle">POST TO THE FEED</h2>
+            <div class="seg" id="feedKind" role="radiogroup" aria-label="Entry kind">
+              <button class="seg-btn active" data-kind="thought">THOUGHT</button>
+              <button class="seg-btn" data-kind="activity">ACTIVITY</button>
+            </div>
+            <p class="hint" id="feedKindHint">Thoughts show on the NOTE screen with markdown; activities appear untagged in the activity log.</p>
             <textarea id="thoughtText" rows="3" placeholder="A couple of sentences. **bold**, _italic_, `code`, [links](https://…) work."></textarea>
             <div class="row">
               <label>DATE <input type="date" id="thoughtDate" /></label>
+              <label class="grow">LINK (OPTIONAL — MAKES THE ENTRY CLICKABLE)
+                <input type="url" id="thoughtLink" placeholder="https://… or /doc/slug/" />
+              </label>
+            </div>
+            <div class="row">
               <button class="btn btn-wide" id="thoughtCommit">POST</button>
               <button class="btn" id="thoughtCancelEdit" hidden>CANCEL EDIT</button>
               <span class="status" id="thoughtStatus"></span>

@@ -1,13 +1,19 @@
-/* Tabs (mode keys) + rear-panel flip + shared popstate handling. */
+/* Mode switching (driven by the dial + keyboard) + rear-panel flip + popstate. */
 
-import { $, $$, mode, reduced } from './util';
+import { $, mode, reduced } from './util';
 import * as sfx from './audio';
 
-const ROUTES: Record<string, string> = { activity: '/', projects: '/projects', writing: '/writing' };
+const ROUTES: Record<string, string> = {
+  activity: '/',
+  projects: '/projects',
+  writing: '/writing',
+  notes: '/notes',
+};
 const TITLES: Record<string, string> = {
   activity: 'IVAN BASHKIROV — IB-01 · SHIPPING LOG',
   projects: 'PROJECTS — IB-01 · IVAN BASHKIROV',
   writing: 'WRITING — IB-01 · IVAN BASHKIROV',
+  notes: 'NOTES — IB-01 · IVAN BASHKIROV',
 };
 
 const hasPanels = (): boolean => !!$('#panel-activity');
@@ -17,6 +23,7 @@ function modeFor(path: string): string | null {
   if (p === '/') return 'activity';
   if (p === '/projects') return 'projects';
   if (p === '/writing') return 'writing';
+  if (p === '/notes') return 'notes';
   if (p === '/rear') return 'rear';
   return null;
 }
@@ -35,9 +42,7 @@ export function activate(m: string, push = true): void {
   if (document.body.dataset.mode !== m) flickScreen();
   for (const id of Object.keys(ROUTES)) {
     const panel = $(`#panel-${id}`);
-    const tab = $(`#tab-${id}`);
     if (panel) panel.hidden = id !== m;
-    if (tab) tab.setAttribute('aria-selected', id === m ? 'true' : 'false');
   }
   const statusMode = $('#statusMode');
   const statusInfo = $('#statusInfo');
@@ -47,6 +52,8 @@ export function activate(m: string, push = true): void {
   document.body.dataset.mode = m;
   document.title = TITLES[m];
   if (push && modeFor(location.pathname) !== m) history.pushState({ m }, '', ROUTES[m]);
+  // keep the dial (and anything else listening) in step
+  document.dispatchEvent(new CustomEvent('ib01:mode', { detail: m }));
 }
 
 /* ---------------- rear flip (§7) ---------------- */
@@ -107,31 +114,6 @@ export function flip(on: boolean, push = true): void {
 }
 
 export function initNav(): void {
-  // tab keys
-  for (const tab of $$('.mode-key')) {
-    tab.addEventListener('click', (e) => {
-      const m = (tab as HTMLElement).dataset.tab!;
-      if (!hasPanels()) return; // real navigation on doc pages
-      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-      e.preventDefault();
-      sfx.click();
-      if (isFlipped()) flip(false, false);
-      activate(m, true);
-    });
-  }
-
-  // roving arrows on the tablist (mockup behavior)
-  $('.modes')?.addEventListener('keydown', (e) => {
-    const ke = e as KeyboardEvent;
-    if (ke.key !== 'ArrowRight' && ke.key !== 'ArrowLeft') return;
-    const keys = $$('.mode-key');
-    const i = keys.indexOf(document.activeElement as HTMLElement);
-    if (i < 0) return;
-    const next = keys[(i + (ke.key === 'ArrowRight' ? 1 : keys.length - 1)) % keys.length];
-    next.focus();
-    next.click();
-  });
-
   // rear affordances
   $('#rearLink')?.addEventListener('click', (e) => {
     e.preventDefault();
