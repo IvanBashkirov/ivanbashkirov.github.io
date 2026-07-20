@@ -1,8 +1,7 @@
-/* Central keyboard dispatch (§7 chart): 1/2/3/4 · j/k · Enter · E · F · S · ? · Esc */
+/* Central keyboard dispatch (§7 chart): 1/2/3 · j/k · Enter · E · ? · Esc */
 
 import { isEink, isLogPage, isTyping } from './util';
 import { activate, flip, isFlipped } from './nav';
-import { cycleDial } from './knob';
 import { moveCursor, openCursor } from './cursor';
 import { ejectDoc } from './disk';
 import { testModeClose, testModeOpen } from './konami';
@@ -40,9 +39,6 @@ export function initKeys(): void {
         break;
       case 'e':
         if (isEink()) ejectDoc();
-        break;
-      case 'f':
-        if (isLogPage() && !isFlipped()) cycleDial();
         break;
       case '?':
         flip(!isFlipped());

@@ -488,8 +488,8 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
 /* live operator status — appears once Firestore answers */
 .now-strip {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   font-family: var(--doto);
   font-weight: 700;
   font-size: 12px;
@@ -506,13 +506,28 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
   color: var(--lcd-dim);
   border: 1px solid var(--lcd-dim);
   border-radius: 3px;
-  padding: 0 5px;
+  padding: 1px 5px;
   font-size: 10px;
+  line-height: 1.6;
+  animation: nowblink 2.4s steps(1) infinite;
 }
 
-.now-strip .now-glyph { font-family: var(--mono, monospace); }
+@keyframes nowblink {
+  0%, 60% { opacity: 1; }
+  61%, 100% { opacity: 0.3; }
+}
+
+.now-strip .now-glyph {
+  font-family: var(--mono, monospace);
+  font-size: 21px;
+  line-height: 1;
+}
 
 .now-strip .now-ago { margin-left: auto; color: var(--lcd-dim); font-size: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .now-strip .now-label { animation: none; }
+}
 
 /* ---------- entries ---------- */
 

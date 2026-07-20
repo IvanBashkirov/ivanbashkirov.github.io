@@ -1,7 +1,6 @@
 import { initCounter } from './counter';
 import { initBoot } from './boot';
 import { initNav } from './nav';
-import { initKnob } from './knob';
 import { initCursor } from './cursor';
 import { initDisk } from './disk';
 import { initKonami } from './konami';
@@ -17,7 +16,6 @@ import { initLive } from './live';
 initCounter();
 initBoot();
 initNav();
-initKnob();
 initCursor();
 initDisk();
 initKonami();

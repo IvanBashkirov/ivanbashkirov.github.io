@@ -48,12 +48,10 @@ export function activate(m: string, push = true): void {
   const statusInfo = $('#statusInfo');
   const panel = $(`#panel-${m}`);
   if (statusMode) statusMode.textContent = `MODE: ${MODE_LABELS[m] ?? m.toUpperCase()}`;
-  if (statusInfo && panel) statusInfo.textContent = `${panel.dataset.count} · PWR ∞`;
+  if (statusInfo && panel) statusInfo.textContent = panel.dataset.count ?? '';
   document.body.dataset.mode = m;
   document.title = TITLES[m];
   if (push && modeFor(location.pathname) !== m) history.pushState({ m }, '', ROUTES[m]);
-  // keep the dial (and anything else listening) in step
-  document.dispatchEvent(new CustomEvent('ib01:mode', { detail: m }));
 }
 
 /* ---------------- rear flip (§7) ---------------- */

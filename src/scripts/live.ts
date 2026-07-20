@@ -71,7 +71,7 @@ function refreshStatusInfo() {
   const m = document.body.dataset.mode;
   const panel = m && document.getElementById(`panel-${m}`);
   const statusInfo = document.getElementById('statusInfo');
-  if (panel && statusInfo) statusInfo.textContent = `${panel.dataset.count} · PWR ∞`;
+  if (panel && statusInfo) statusInfo.textContent = panel.dataset.count ?? '';
 }
 
 async function initFeed() {
