@@ -20,12 +20,6 @@ const FILTER_CATS: Record<string, string | null> = {
   projects: 'proj',
   writing: 'doc',
 };
-const COUNT_KEYS: Record<string, string> = {
-  activity: 'countActivity',
-  projects: 'countProjects',
-  writing: 'countWriting',
-};
-
 const hasPanels = (): boolean => !!$('#panel-activity');
 
 function modeFor(path: string): string | null {
@@ -67,9 +61,7 @@ export function activate(m: string, push = true): void {
     $(`#tab-${id}`)?.setAttribute('aria-selected', id === m ? 'true' : 'false');
   }
   const statusMode = $('#statusMode');
-  const statusInfo = $('#statusInfo');
   if (statusMode) statusMode.textContent = `MODE: ${MODE_LABELS[m] ?? m.toUpperCase()}`;
-  if (statusInfo) statusInfo.textContent = panel.dataset[COUNT_KEYS[m]] ?? '';
   document.body.dataset.mode = m;
   document.title = TITLES[m];
   if (push && modeFor(location.pathname) !== m) history.pushState({ m }, '', ROUTES[m]);

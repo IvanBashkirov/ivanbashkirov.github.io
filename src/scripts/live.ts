@@ -40,7 +40,7 @@ async function initNow() {
     `<span class="now-label">NOW</span>` +
     `<span class="now-glyph">${esc(preset.glyph)}</span> ${esc(preset.label)}` +
     (note ? ` · ${esc(note.toUpperCase())}` : '') +
-    (status.updated ? `<span class="now-ago">${ago(status.updated)}</span>` : '');
+    (status.updated ? ` <span class="now-ago">${ago(status.updated)}</span>` : '');
   strip.hidden = false;
 }
 
@@ -67,14 +67,6 @@ function renderFeedItem(t: FeedItem): string {
   </li>`;
 }
 
-/** The status bar LOG count may be stale after runtime entries land. */
-function refreshStatusInfo() {
-  const statusInfo = document.getElementById('statusInfo');
-  const panel = document.getElementById('panel-activity');
-  if (panel && statusInfo && document.body.dataset.mode === 'activity')
-    statusInfo.textContent = panel.dataset.countActivity ?? '';
-}
-
 async function initFeed() {
   const panel = document.getElementById('panel-activity');
   if (!panel) return;
@@ -98,11 +90,8 @@ async function initFeed() {
     )
     .join('');
   panel.insertAdjacentHTML('afterbegin', html);
-  const total = Number(panel.dataset.staticEntries ?? 0) + items.length;
-  panel.dataset.countActivity = `${total} ENTRIES`;
   // if a PROJ/TXT filter is active, the fresh log entries must arrive hidden
   activate(document.body.dataset.mode ?? 'activity', false);
-  refreshStatusInfo();
 }
 
 export function initLive() {
