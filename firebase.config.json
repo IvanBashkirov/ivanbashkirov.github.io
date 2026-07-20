@@ -1,9 +1,9 @@
 {
-  "apiKey": "PASTE_FIREBASE_WEB_API_KEY",
-  "authDomain": "PASTE_PROJECT_ID.firebaseapp.com",
-  "projectId": "PASTE_PROJECT_ID",
-  "storageBucket": "PASTE_PROJECT_ID.firebasestorage.app",
-  "messagingSenderId": "PASTE_SENDER_ID",
-  "appId": "PASTE_APP_ID",
+  "apiKey": "AIzaSyAUnH-IJQt9QkB_7AWN2_QXuLNs2hesOYE",
+  "authDomain": "portfolio-49af5.firebaseapp.com",
+  "projectId": "portfolio-49af5",
+  "storageBucket": "portfolio-49af5.firebasestorage.app",
+  "messagingSenderId": "529850904057",
+  "appId": "1:529850904057:web:217e41ac29bcace422a128",
   "adminEmails": ["ibash@protonmail.com", "ivanbashkirov@protonmail.com"]
 }
