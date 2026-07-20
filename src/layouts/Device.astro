@@ -18,7 +18,7 @@ interface Props {
 
 const { mode, title, description, ogImage, noindex } = Astro.props;
 
-const site = await loadSite();
+const site = loadSite();
 const log = await loadLog();
 const projects = await loadProjects();
 const docs = await getVisibleDocs();

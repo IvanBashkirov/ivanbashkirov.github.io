@@ -6,7 +6,7 @@ const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export const GET: APIRoute = async (context) => {
-  const site = await loadSite();
+  const site = loadSite();
   const docs = await getVisibleDocs();
   const base = String(context.site ?? site.domain).replace(/\/$/, '');
 

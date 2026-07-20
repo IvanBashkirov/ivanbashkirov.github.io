@@ -69,14 +69,3 @@ export async function fetchCollection(name: string): Promise<DecodedDoc[]> {
   } while (pageToken);
   return docs;
 }
-
-/** A single document by path (e.g. 'site/meta'), or null if missing. */
-export async function fetchDocument(path: string): Promise<Record<string, unknown> | null> {
-  const res = await fetch(`${base()}/${path}?key=${firebaseConfig.apiKey}`);
-  if (res.status === 404) return null;
-  if (!res.ok) {
-    throw new Error(`Firestore fetch failed (${res.status}) for ${path}: ${await res.text()}`);
-  }
-  const json = (await res.json()) as FirestoreDoc;
-  return decodeFields(json.fields ?? {});
-}

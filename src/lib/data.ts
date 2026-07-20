@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { parse } from 'yaml';
 import { firebaseConfigured } from './firebase-config';
-import { fetchCollection, fetchDocument } from './firestore-rest';
+import { fetchCollection } from './firestore-rest';
 
 export interface LogEntry {
   n: number;
@@ -40,8 +40,11 @@ function normalizeDate(d: unknown): string {
   return String(d);
 }
 
-/** Local site.yaml, used as build fallback and as the admin console's seed values. */
-export function loadLocalSite(): SiteMeta {
+/**
+ * Site meta changes rarely, so it stays in the repo (content/site.yaml)
+ * rather than Firestore — edit it like code.
+ */
+export function loadSite(): SiteMeta {
   const s = parse(read('site.yaml')) as SiteMeta & { londonDeparture: unknown };
   return { ...s, londonDeparture: normalizeDate(s.londonDeparture) };
 }
@@ -53,18 +56,8 @@ function sortLog(entries: LogEntry[]): LogEntry[] {
 }
 
 // Build-time memo: many pages ask for the same data; fetch Firestore once.
-let sitePromise: Promise<SiteMeta> | undefined;
 let logPromise: Promise<LogEntry[]> | undefined;
 let projectsPromise: Promise<Project[]> | undefined;
-
-export function loadSite(): Promise<SiteMeta> {
-  return (sitePromise ??= (async () => {
-    if (!firebaseConfigured) return loadLocalSite();
-    const meta = await fetchDocument('site/meta');
-    if (!meta) return loadLocalSite(); // Firestore live but never initialised
-    return { ...(meta as unknown as SiteMeta), londonDeparture: normalizeDate(meta.londonDeparture) };
-  })());
-}
 
 /** Entries sorted newest-first. Empty log ships an empty device. */
 export function loadLog(): Promise<LogEntry[]> {

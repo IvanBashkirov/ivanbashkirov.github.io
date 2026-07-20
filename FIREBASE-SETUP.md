@@ -1,10 +1,12 @@
 # Firebase setup — making the IB-01 content live
 
-All site content (log entries, projects/channels, docs, and the nameplate meta)
+The content that actually changes — log entries, projects/channels, and docs —
 lives in **Cloud Firestore**. The public site is still a static GitHub Pages
-build — but the build **fetches everything from Firestore**, and you edit it at
-**`/admin`** on the live site. Until Firebase is configured, the build falls
-back to the local `content/` files, so nothing breaks in the meantime.
+build — but the build **fetches that content from Firestore**, and you edit it
+at **`/admin`** on the live site. Rarely-changing site meta (nameplate, bio,
+serial, contacts) stays in the repo as `content/site.yaml`; edit it like code.
+Until Firebase is configured, the build falls back to the local `content/`
+files for everything, so nothing breaks in the meantime.
 
 One-time setup, roughly 10 minutes:
 
@@ -44,9 +46,7 @@ accept writes from the emails listed in `firestore.rules`.
 1. Commit and push `firebase.config.json` (merge this branch) — the site
    rebuilds with Firestore as its content source.
 2. Open **`https://ivanbashkirov.com/admin`**, log in.
-3. Go to **META** — it's prefilled from the repo's `site.yaml` — press
-   **SAVE META** once to write it to Firestore.
-4. Add log entries, channels, and docs from their tabs. Everything saves to
+3. Add log entries, channels, and docs from their tabs. Everything saves to
    Firestore instantly.
 
 ## 5. The PUBLISH button
@@ -71,16 +71,20 @@ been published yet.
 /admin (browser, Firebase Auth) ──writes──▶ Firestore
                                               │
 GitHub Actions build (npm run build) ◀──reads─┘   ◀── PUBLISH button
-        │
+        │                            ◀──reads── content/site.yaml (repo)
         ▼
-GitHub Pages (static HTML, OG images, RSS — all rendered from Firestore)
+GitHub Pages (static HTML, OG images, RSS — rendered from Firestore + site.yaml)
 ```
 
 Content model in Firestore:
 
 | Collection | Document id | Fields |
 | --- | --- | --- |
-| `site` | `meta` (single doc) | title, domain, serial, email, x, github, londonDeparture, tunesLogged, bio |
 | `log` | zero-padded Nº (`0001`) | n, date (`YYYY-MM-DD`), type (`ship`/`txt`/`note`), text, doc? (slug) |
 | `projects` | channel number (`01`) | ch, name, status (`rec`/`out`/`mute`/`stby`), desc, link?, year |
 | `docs` | slug | title, ref, date, kind (`essay`/`thought`/`tune`), minutes?, standfirst?, hidden, body (markdown) |
+
+Site meta (nameplate, bio, contacts, `tunesLogged`, `londonDeparture`) is not
+in Firestore — it's `content/site.yaml` in the repo, applied on the next build.
+OG images aren't stored anywhere: they're generated during the build from the
+content above.

@@ -14,7 +14,6 @@ import {
   getFirestore,
   collection,
   doc,
-  getDoc,
   getDocs,
   setDoc,
   deleteDoc,
@@ -109,28 +108,19 @@ async function enter(user: User) {
     : `${mine} — NOT AN OPERATOR (writes will be rejected)`;
   if (localStorage.getItem(DIRTY_KEY)) $('publishLed').classList.add('hot');
 
-  const [logSnap, docsSnap, projSnap, siteSnap] = await Promise.all([
+  const [logSnap, docsSnap, projSnap] = await Promise.all([
     getDocs(collection(db, 'log')),
     getDocs(collection(db, 'docs')),
     getDocs(collection(db, 'projects')),
-    getDoc(doc(db, 'site', 'meta')),
   ]);
   log = new Map(logSnap.docs.map((d) => [d.id, d.data() as LogEntry]));
   docsMap = new Map(docsSnap.docs.map((d) => [d.id, d.data() as DocRecord]));
   projects = new Map(projSnap.docs.map((d) => [d.id, d.data() as Project]));
 
-  fillMeta(siteSnap.exists() ? (siteSnap.data() as Record<string, unknown>) : seedSite());
-  if (!siteSnap.exists())
-    flash($('mStatus'), 'META NOT IN FIRESTORE YET — PREFILLED FROM REPO, PRESS SAVE');
-
   resetLogForm();
   renderLog();
   renderDocs();
   renderProjects();
-}
-
-function seedSite(): Record<string, unknown> {
-  return JSON.parse($('seed-site').textContent || '{}');
 }
 
 /* ---------- tabs ---------- */
@@ -452,32 +442,6 @@ $('chList').addEventListener('click', async (ev) => {
     markDirty();
     if (editingProjectId === id) resetProjectForm();
     renderProjects();
-  }
-});
-
-/* ---------- META ---------- */
-
-function fillMeta(m: Record<string, unknown>) {
-  const set = (id: string, v: unknown) => (($(id) as HTMLInputElement).value = v == null ? '' : String(v));
-  set('mTitle', m.title); set('mSerial', m.serial); set('mDomain', m.domain);
-  set('mEmail', m.email); set('mX', m.x); set('mGithub', m.github);
-  set('mLondon', m.londonDeparture); set('mTunes', m.tunesLogged ?? 0); set('mBio', m.bio);
-}
-
-$('mSave').addEventListener('click', async () => {
-  const status = $('mStatus');
-  const val = (id: string) => ($(id) as HTMLInputElement).value.trim();
-  try {
-    await setDoc(doc(db, 'site', 'meta'), {
-      title: val('mTitle'), serial: val('mSerial'), domain: val('mDomain'),
-      email: val('mEmail'), x: val('mX'), github: val('mGithub'),
-      londonDeparture: val('mLondon'), tunesLogged: Number(val('mTunes')) || 0,
-      bio: ($('mBio') as HTMLTextAreaElement).value.trim(),
-    });
-    markDirty();
-    flash(status, 'NAMEPLATE SAVED ✓');
-  } catch (e) {
-    flash(status, `WRITE FAILED: ${(e as Error).message}`, true);
   }
 });
 

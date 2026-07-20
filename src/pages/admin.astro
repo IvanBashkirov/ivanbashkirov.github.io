@@ -4,10 +4,6 @@ import '@fontsource/doto/latin-900.css';
 import '@fontsource/fragment-mono/latin-400.css';
 import '../styles/admin.css';
 import { firebaseConfigured } from '../lib/firebase-config';
-import { loadLocalSite } from '../lib/data';
-
-// Seed values offered on first run, when site/meta doesn't exist in Firestore yet.
-const seedSite = loadLocalSite();
 ---
 
 <!doctype html>
@@ -21,8 +17,6 @@ const seedSite = loadLocalSite();
     <meta name="theme-color" content="#191919" />
   </head>
   <body data-configured={firebaseConfigured ? '1' : '0'}>
-    <script type="application/json" id="seed-site" set:html={JSON.stringify(seedSite)} />
-
     <div class="svc">
       <header class="svc-head">
         <div class="svc-brand">
@@ -80,7 +74,6 @@ const seedSite = loadLocalSite();
           <button class="tab active" data-tab="log" role="tab" aria-selected="true">LOG</button>
           <button class="tab" data-tab="docs" role="tab" aria-selected="false">DOCS</button>
           <button class="tab" data-tab="channels" role="tab" aria-selected="false">CHANNELS</button>
-          <button class="tab" data-tab="meta" role="tab" aria-selected="false">META</button>
         </nav>
 
         <!-- LOG: quick-entry pad + entries -->
@@ -182,32 +175,6 @@ const seedSite = loadLocalSite();
             </div>
           </div>
           <ol class="list" id="chList"></ol>
-        </section>
-
-        <!-- META -->
-        <section class="pane" id="pane-meta" role="tabpanel" hidden>
-          <div class="card">
-            <h2>UNIT NAMEPLATE</h2>
-            <div class="row">
-              <label class="grow">TITLE <input type="text" id="mTitle" /></label>
-              <label>SERIAL <input type="text" id="mSerial" class="mid" /></label>
-            </div>
-            <div class="row">
-              <label class="grow">DOMAIN <input type="text" id="mDomain" /></label>
-              <label class="grow">EMAIL <input type="text" id="mEmail" /></label>
-            </div>
-            <div class="row">
-              <label>X HANDLE <input type="text" id="mX" class="mid" /></label>
-              <label>GITHUB <input type="text" id="mGithub" class="mid" /></label>
-              <label>LONDON DEPARTURE <input type="date" id="mLondon" /></label>
-              <label>TUNES LOGGED <input type="number" id="mTunes" min="0" class="narrow" /></label>
-            </div>
-            <label class="block">BIO (REAR PANEL) <textarea id="mBio" rows="5"></textarea></label>
-            <div class="row">
-              <button class="btn btn-wide" id="mSave">SAVE META</button>
-              <span class="status" id="mStatus"></span>
-            </div>
-          </div>
         </section>
       </main>
 
