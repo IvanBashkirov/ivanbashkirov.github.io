@@ -1,12 +1,12 @@
-/* Handheld mode (§10.2): on phones the chassis is fixed in the viewport,
+/* Chassis lock (§10.2): the device is fixed in the viewport at every size,
    so wheel/touch gestures that land on the chassis are redirected into the
    active scroll surface — the screen, or the rear panel when flipped. */
 
 import { $ } from './util';
 import { isFlipped } from './nav';
 
-// keep in sync with the handheld media block in device.css
-const mq = matchMedia('(max-width: 720px) and (min-height: 480px)');
+// keep in sync with the chassis-lock media block in device.css
+const mq = matchMedia('(min-height: 480px)');
 
 function scroller(): HTMLElement | null {
   return isFlipped() ? $('#rearFace') : $('#screenInner');

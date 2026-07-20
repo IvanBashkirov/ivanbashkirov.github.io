@@ -11,6 +11,7 @@ import { initKeys } from './keys';
 import { initErr } from './err';
 import { initHandheld } from './handheld';
 import { initLive } from './live';
+import { initExtLinks } from './ext-links';
 
 initCounter();
 initBoot();
@@ -25,3 +26,4 @@ initKeys();
 initErr();
 initHandheld();
 initLive();
+initExtLinks();

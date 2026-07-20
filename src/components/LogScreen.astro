@@ -160,6 +160,8 @@ function projLinkLabel(link: string): string {
                   <a
                     class="attach"
                     href={p.link}
+                    target={p.link.startsWith('http') ? '_blank' : undefined}
+                    rel={p.link.startsWith('http') ? 'noopener' : undefined}
                     data-doc={p.link.startsWith('/doc/') ? p.link.split('/')[2] : undefined}
                     data-kind={p.link.startsWith('/doc/') ? 'essay' : undefined}
                   >

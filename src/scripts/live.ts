@@ -44,10 +44,10 @@ async function initNow() {
   strip.hidden = false;
 }
 
-/** Anchor-wrap entry content when the item carries a link. */
+/** Anchor-wrap entry content when the item carries a link (external → new tab). */
 const linked = (item: FeedItem, inner: string) =>
   item.link
-    ? `<a class="entry-link" href="${esc(item.link)}" rel="noopener">${inner}</a>`
+    ? `<a class="entry-link" href="${esc(item.link)}" rel="noopener"${/^https?:/i.test(item.link) ? ' target="_blank"' : ''}>${inner}</a>`
     : inner;
 
 /** Live entries join the LOG stream: thoughts tagged, activities untagged. */

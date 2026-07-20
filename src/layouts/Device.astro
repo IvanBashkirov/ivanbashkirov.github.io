@@ -218,9 +218,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
             <p class="rear-bio">{site.bio}</p>
 
             <div class="rear-contacts">
-              <a href={`https://x.com/${site.x}`} rel="me">X — @{site.x}</a>
+              <a href={`https://x.com/${site.x}`} rel="me noopener" target="_blank">X — @{site.x}</a>
               <a href={`mailto:${site.email}`}>EMAIL</a>
-              <a href={`https://github.com/${site.github}`} rel="me">GITHUB</a>
+              <a href={`https://github.com/${site.github}`} rel="me noopener" target="_blank">GITHUB</a>
               <a href="/feed.xml">RSS</a>
             </div>
 
