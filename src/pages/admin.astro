@@ -4,6 +4,7 @@ import '@fontsource/doto/latin-900.css';
 import '@fontsource/fragment-mono/latin-400.css';
 import '../styles/admin.css';
 import { firebaseConfigured } from '../lib/firebase-config';
+import { STATUS_PRESETS } from '../lib/status-presets';
 ---
 
 <!doctype html>
@@ -21,13 +22,10 @@ import { firebaseConfigured } from '../lib/firebase-config';
       <header class="svc-head">
         <div class="svc-brand">
           <b>IB-01</b> SERVICE MODE
-          <span class="svc-sub">AUTHORISED PERSONNEL ONLY · WARRANTY VOID IF SEAL BROKEN</span>
+          <span class="svc-sub">LIVE CHANNELS: STATUS + THOUGHTS · EVERYTHING ELSE SHIPS VIA GIT</span>
         </div>
         <div class="svc-session" id="sessionBox" hidden>
           <span class="svc-who" id="whoami"></span>
-          <button class="btn btn-publish" id="publishBtn" title="Rebuild the public site from Firestore">
-            <span class="led" id="publishLed"></span>PUBLISH
-          </button>
           <button class="btn" id="signOutBtn">SIGN OUT</button>
         </div>
       </header>
@@ -53,133 +51,59 @@ import { firebaseConfigured } from '../lib/firebase-config';
         </form>
       </section>
 
-      <!-- Publish panel -->
-      <section class="card" id="publishPanel" hidden>
-        <h2>PUBLISH — REBUILD PUBLIC SITE</h2>
-        <p class="hint">
-          Edits are saved to Firestore instantly, but the public site is static: publishing runs the
-          GitHub Pages build so it re-renders from Firestore. Needs a fine-grained GitHub token with
-          <b>Actions: read &amp; write</b> on this repository (stored only in this browser).
-        </p>
-        <div class="row">
-          <label class="grow">GITHUB TOKEN <input type="password" id="ghToken" placeholder="github_pat_…" /></label>
-          <button class="btn btn-wide" id="publishGo">RUN BUILD</button>
-        </div>
-        <p class="status" id="publishStatus"></p>
-      </section>
-
       <!-- Console -->
       <main id="console" hidden>
         <nav class="tabs" role="tablist">
-          <button class="tab active" data-tab="log" role="tab" aria-selected="true">LOG</button>
-          <button class="tab" data-tab="docs" role="tab" aria-selected="false">DOCS</button>
-          <button class="tab" data-tab="channels" role="tab" aria-selected="false">CHANNELS</button>
+          <button class="tab active" data-tab="status" role="tab" aria-selected="true">STATUS</button>
+          <button class="tab" data-tab="thoughts" role="tab" aria-selected="false">THOUGHTS</button>
         </nav>
 
-        <!-- LOG: quick-entry pad + entries -->
-        <section class="pane" id="pane-log" role="tabpanel">
-          <div class="card quickpad">
-            <h2 id="logFormTitle">QUICK ENTRY</h2>
-            <div class="seg" id="logType" role="radiogroup" aria-label="Entry type">
-              <button class="seg-btn active" data-type="ship">SHIP</button>
-              <button class="seg-btn" data-type="txt">TXT</button>
-              <button class="seg-btn" data-type="note">NOTE</button>
-            </div>
-            <textarea id="logText" rows="3" placeholder="What shipped? One line, past tense, no excuses."></textarea>
-            <div class="row">
-              <label>DATE <input type="date" id="logDate" /></label>
-              <label>Nº <input type="number" id="logN" min="1" class="narrow" /></label>
-              <label class="grow">ATTACH DOC <select id="logDoc"><option value="">— NONE —</option></select></label>
-            </div>
-            <div class="row">
-              <button class="btn btn-wide" id="logCommit">COMMIT ENTRY</button>
-              <button class="btn" id="logCancelEdit" hidden>CANCEL EDIT</button>
-              <span class="status" id="logStatus"></span>
-            </div>
-          </div>
-          <ol class="list" id="logList"></ol>
-        </section>
-
-        <!-- DOCS: disk box + editor -->
-        <section class="pane" id="pane-docs" role="tabpanel" hidden>
-          <div id="docListView">
-            <div class="row toolbar">
-              <button class="btn btn-wide" id="docNew">+ NEW DOC</button>
-            </div>
-            <ol class="list" id="docList"></ol>
-          </div>
-          <div id="docEditView" hidden>
-            <div class="card">
-              <div class="row toolbar">
-                <button class="btn" id="docBack">← DISK BOX</button>
-                <span class="grow"></span>
-                <button class="btn" id="docDelete">DELETE</button>
-                <button class="btn btn-wide" id="docSave">SAVE DOC</button>
-                <span class="status" id="docStatus"></span>
-              </div>
-              <div class="row">
-                <label class="grow">TITLE <input type="text" id="docTitle" /></label>
-                <label>SLUG <input type="text" id="docSlug" class="mid" /></label>
-              </div>
-              <div class="row">
-                <label>REF <input type="text" id="docRef" class="narrow" /></label>
-                <label>KIND
-                  <select id="docKind">
-                    <option value="essay">ESSAY</option>
-                    <option value="thought">THOUGHT</option>
-                    <option value="tune">TUNE</option>
-                  </select>
-                </label>
-                <label>DATE <input type="date" id="docDate" /></label>
-                <label>MIN <input type="number" id="docMinutes" min="1" class="narrow" placeholder="auto" /></label>
-                <label class="check"><input type="checkbox" id="docHidden" /> HIDDEN</label>
-              </div>
-              <label class="block">STANDFIRST <input type="text" id="docStandfirst" /></label>
-            </div>
-            <div class="editor-split">
-              <div class="editor-col">
-                <div class="col-head">MARKDOWN <span id="docWords" class="dim"></span></div>
-                <textarea id="docBody" spellcheck="false"></textarea>
-              </div>
-              <div class="editor-col">
-                <div class="col-head">PREVIEW</div>
-                <div class="preview doc-body" id="docPreview"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- CHANNELS -->
-        <section class="pane" id="pane-channels" role="tabpanel" hidden>
+        <!-- STATUS: what the operator is doing right now -->
+        <section class="pane" id="pane-status" role="tabpanel">
           <div class="card">
-            <h2 id="chFormTitle">NEW CHANNEL</h2>
+            <h2>OPERATOR STATUS</h2>
+            <p class="hint">Shown live on the front panel. Pick a preset, add detail if you like.</p>
+            <div class="preset-grid" id="presetGrid" role="radiogroup" aria-label="Status preset">
+              {STATUS_PRESETS.map((p) => (
+                <button class="preset" data-preset={p.id}>
+                  <span class="p-glyph">{p.glyph}</span>
+                  <span class="p-label">{p.label}</span>
+                </button>
+              ))}
+            </div>
             <div class="row">
-              <label>CH <input type="text" id="chCh" class="narrow" placeholder="01" /></label>
-              <label class="grow">NAME <input type="text" id="chName" /></label>
-              <label>STATUS
-                <select id="chStatus">
-                  <option value="rec">REC — recording</option>
-                  <option value="out">OUT — shipped</option>
-                  <option value="mute">MUTE — struck off</option>
-                  <option value="stby">STBY — standby</option>
-                </select>
+              <label class="grow">DETAIL (OPTIONAL, FREE TEXT)
+                <input type="text" id="statusNote" maxlength="60" placeholder="leg day · exploring Athens · debugging the debugger" />
               </label>
-              <label>YEAR <input type="text" id="chYear" class="narrow" /></label>
             </div>
-            <label class="block">DESC <textarea id="chDesc" rows="2"></textarea></label>
             <div class="row">
-              <label class="grow">LINK <input type="text" id="chLink" placeholder="https://… or /doc/slug" /></label>
-              <button class="btn btn-wide" id="chCommit">SAVE CHANNEL</button>
-              <button class="btn" id="chCancelEdit" hidden>CANCEL</button>
-              <span class="status" id="chStatusMsg"></span>
+              <button class="btn btn-wide" id="statusSet">SET STATUS</button>
+              <button class="btn" id="statusClear">CLEAR — GO DARK</button>
+              <span class="status" id="statusMsg"></span>
             </div>
+            <p class="now-preview" id="statusLive"></p>
           </div>
-          <ol class="list" id="chList"></ol>
+        </section>
+
+        <!-- THOUGHTS: the quick stream -->
+        <section class="pane" id="pane-thoughts" role="tabpanel" hidden>
+          <div class="card quickpad">
+            <h2 id="thoughtFormTitle">POST A THOUGHT</h2>
+            <textarea id="thoughtText" rows="3" placeholder="A couple of sentences. **bold**, _italic_, `code`, [links](https://…) work."></textarea>
+            <div class="row">
+              <label>DATE <input type="date" id="thoughtDate" /></label>
+              <button class="btn btn-wide" id="thoughtCommit">POST</button>
+              <button class="btn" id="thoughtCancelEdit" hidden>CANCEL EDIT</button>
+              <span class="status" id="thoughtStatus"></span>
+            </div>
+            <div class="t-preview doc-body" id="thoughtPreview" hidden></div>
+          </div>
+          <ol class="list" id="thoughtList"></ol>
         </section>
       </main>
 
       <footer class="svc-foot">
-        IB-01 SERVICE TERMINAL · CONTENT LIVES IN FIRESTORE · THE FRONT PANEL IS A STATIC RENDER
+        IB-01 SERVICE TERMINAL · STATUS AND THOUGHTS GO LIVE INSTANTLY · NO REBUILD REQUIRED
       </footer>
     </div>
 

@@ -14,6 +14,7 @@ import { initSnd } from './snd';
 import { initKeys } from './keys';
 import { initErr } from './err';
 import { initHandheld } from './handheld';
+import { initLive } from './live';
 
 initCounter();
 initBoot();
@@ -31,3 +32,4 @@ initSnd();
 initKeys();
 initErr();
 initHandheld();
+initLive();

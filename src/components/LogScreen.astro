@@ -1,5 +1,4 @@
 ---
-import { render } from 'astro:content';
 import { loadLog, loadProjects, groupByMonth, fmtDate, fmtDay } from '../lib/data';
 import { getVisibleDocs, getAllDocs, docBySlug, type Doc } from '../lib/docs';
 import DiskGlyph from './DiskGlyph.astro';
@@ -10,21 +9,13 @@ interface Props {
 
 const { active } = Astro.props;
 
-const log = await loadLog();
-const projects = await loadProjects();
+const log = loadLog();
+const projects = loadProjects();
 const allDocs = await getAllDocs();
 const visibleDocs = await getVisibleDocs();
 const hiddenTune = allDocs.find((d) => d.data.hidden);
 
 const months = groupByMonth(log);
-const thoughts = visibleDocs.filter((d) => d.data.kind === 'thought');
-
-const thoughtEntries = await Promise.all(
-  thoughts.map(async (d) => ({ doc: d, Content: (await render(d)).Content }))
-);
-const thoughtMonths = groupByMonth(
-  thoughtEntries.map((t) => ({ ...t, date: t.doc.dateStr }))
-);
 
 const TAGS: Record<string, string> = { ship: 'SHIP', txt: 'TXT', note: 'NOTE' };
 
@@ -55,6 +46,9 @@ function projLinkLabel(link: string): string {
     <span id="statusInfo">{modeCounts[active]} · PWR ∞</span>
   </span>
 </div>
+
+<!-- live operator status, fetched from Firestore at runtime -->
+<div class="now-strip" id="nowStrip" hidden></div>
 
 <section
   class="panel"
@@ -194,26 +188,6 @@ function projLinkLabel(link: string): string {
     </ul>
   </div>
 
-  <div class="thought-stream">
-    {
-      thoughtMonths.map((m) => (
-        <div class="month-group">
-          <div class="month-divider" aria-hidden="true">
-            {m.label}
-          </div>
-          {m.items.map(({ doc, Content }) => (
-            <article class="t-entry" data-type="txt">
-              <div class="meta">
-                <span class="e-date">{fmtDay(doc.dateStr)}</span>
-                <span class="tag tag-note">THOUGHT</span>
-              </div>
-              <div class="t-body">
-                <Content />
-              </div>
-            </article>
-          ))}
-        </div>
-      ))
-    }
-  </div>
+  <!-- short thoughts live in Firestore; populated at runtime -->
+  <div class="thought-stream" id="thoughtStream"></div>
 </section>

@@ -14,7 +14,6 @@
     "@fontsource/fragment-mono": "^5.2.8",
     "astro": "^5.18.2",
     "firebase": "^12.16.0",
-    "marked": "^18.0.6",
     "yaml": "^2.9.0"
   },
   "devDependencies": {

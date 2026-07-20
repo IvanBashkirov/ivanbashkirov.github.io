@@ -1,12 +1,20 @@
-# Firebase setup — making the IB-01 content live
+# Firebase setup — the IB-01's live channels
 
-The content that actually changes — log entries, projects/channels, and docs —
-lives in **Cloud Firestore**. The public site is still a static GitHub Pages
-build — but the build **fetches that content from Firestore**, and you edit it
-at **`/admin`** on the live site. Rarely-changing site meta (nameplate, bio,
-serial, contacts) stays in the repo as `content/site.yaml`; edit it like code.
-Until Firebase is configured, the build falls back to the local `content/`
-files for everything, so nothing breaks in the meantime.
+The site is a plain static build: log entries (`content/log.yaml`), channels
+(`content/projects.yaml`), docs (`content/docs/*.md`), and site meta
+(`content/site.yaml`) all live in the repo and ship on push, exactly as before.
+
+Firebase powers only the two **live** channels, fetched by the browser at
+runtime so they update the instant you save — no rebuild:
+
+- **STATUS** — the "NOW" strip on the front panel: a preset (working, workout,
+  eating, travelling, vacation, at a session, sleeping, offline — each with a
+  glyph) plus optional free text ("leg day", "exploring Athens").
+- **THOUGHTS** — the short-thought stream on the WRITING panel. A couple of
+  sentences with minimal markdown (bold, italic, code, links).
+
+Both are edited at **`/admin`** on the live site, behind a login only you have.
+Until Firebase is configured, the site simply shows no status and no thoughts.
 
 One-time setup, roughly 10 minutes:
 
@@ -41,50 +49,28 @@ accept writes from the emails listed in `firestore.rules`.
    from the ones listed there, edit the list (and `adminEmails` in
    `firebase.config.json`) first.
 
-## 4. Deploy and initialise
+## 4. Deploy and go
 
 1. Commit and push `firebase.config.json` (merge this branch) — the site
-   rebuilds with Firestore as its content source.
-2. Open **`https://ivanbashkirov.com/admin`**, log in.
-3. Add log entries, channels, and docs from their tabs. Everything saves to
-   Firestore instantly.
-
-## 5. The PUBLISH button
-
-Saving writes to Firestore immediately, but the public pages are static
-renders — press **PUBLISH** to run the GitHub Pages build so the site
-re-renders from Firestore (takes ~2 minutes). The button needs a GitHub token,
-kept only in your browser's localStorage:
-
-1. GitHub → **Settings → Developer settings → Personal access tokens →
-   Fine-grained tokens → Generate new token**.
-2. Repository access: **Only select repositories** → this repo.
-   Permissions: **Actions → Read and write**. Nothing else.
-3. Paste it into the PUBLISH panel once; it's remembered on that device.
-
-The amber LED on the PUBLISH button means there are saved edits that haven't
-been published yet.
+   rebuilds with the runtime fetch enabled.
+2. Open **`https://ivanbashkirov.com/admin`**, log in, set a status, post a
+   thought. Both are visible on the public site on the next page load —
+   no build, no waiting.
 
 ## How it fits together
 
 ```
-/admin (browser, Firebase Auth) ──writes──▶ Firestore
-                                              │
-GitHub Actions build (npm run build) ◀──reads─┘   ◀── PUBLISH button
-        │                            ◀──reads── content/site.yaml (repo)
-        ▼
-GitHub Pages (static HTML, OG images, RSS — rendered from Firestore + site.yaml)
+git push ──▶ GitHub Actions build ──▶ GitHub Pages (log, docs, channels, meta)
+/admin (Firebase Auth) ──writes──▶ Firestore ◀──runtime fetch── visitor's browser
+                                                (NOW strip + thought stream)
 ```
 
-Content model in Firestore:
+Data model in Firestore:
 
 | Collection | Document id | Fields |
 | --- | --- | --- |
-| `log` | zero-padded Nº (`0001`) | n, date (`YYYY-MM-DD`), type (`ship`/`txt`/`note`), text, doc? (slug) |
-| `projects` | channel number (`01`) | ch, name, status (`rec`/`out`/`mute`/`stby`), desc, link?, year |
-| `docs` | slug | title, ref, date, kind (`essay`/`thought`/`tune`), minutes?, standfirst?, hidden, body (markdown) |
+| `status` | `current` (single doc) | preset (see `src/lib/status-presets.ts`), note? (free text), updated (ISO) |
+| `thoughts` | random uuid | date (`YYYY-MM-DD`), text (mini-markdown), created (ISO) |
 
-Site meta (nameplate, bio, contacts, `tunesLogged`, `londonDeparture`) is not
-in Firestore — it's `content/site.yaml` in the repo, applied on the next build.
-OG images aren't stored anywhere: they're generated during the build from the
-content above.
+Adding a preset later = one line in `src/lib/status-presets.ts` (id, glyph,
+label); the admin picker and the front panel both read from it.

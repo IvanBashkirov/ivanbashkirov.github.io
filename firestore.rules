@@ -1,7 +1,7 @@
 rules_version = '2';
 
-// IB-01 content database.
-// The whole world may read (the public site builds from these collections);
+// IB-01 live channels (status + thoughts).
+// The whole world may read (visitors' browsers fetch these at runtime);
 // only the operator may write. Keep this email list in sync with
 // "adminEmails" in firebase.config.json.
 service cloud.firestore {

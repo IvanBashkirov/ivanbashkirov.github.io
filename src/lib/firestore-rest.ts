@@ -1,7 +1,8 @@
 /**
- * Minimal Firestore REST reader for build time. Public-read security rules
- * make these plain GETs; the web API key only identifies the project.
- * Used by the Astro build so the deployed HTML is rendered from Firestore.
+ * Minimal Firestore REST reader, safe for both node and the browser.
+ * Public-read security rules make these plain GETs; the web API key only
+ * identifies the project. Used at runtime to pull the live collections
+ * (thoughts, status) into the static pages.
  */
 import { firebaseConfig } from './firebase-config';
 
@@ -68,4 +69,15 @@ export async function fetchCollection(name: string): Promise<DecodedDoc[]> {
     pageToken = json.nextPageToken ?? '';
   } while (pageToken);
   return docs;
+}
+
+/** A single document by path (e.g. 'status/current'), or null if missing. */
+export async function fetchDocument(path: string): Promise<Record<string, unknown> | null> {
+  const res = await fetch(`${base()}/${path}?key=${firebaseConfig.apiKey}`);
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`Firestore fetch failed (${res.status}) for ${path}: ${await res.text()}`);
+  }
+  const json = (await res.json()) as FirestoreDoc;
+  return decodeFields(json.fields ?? {});
 }

@@ -478,6 +478,35 @@ html.js body[data-mode='rear'] .face-front { visibility: visible; }
 
 #statusFlash { color: var(--lcd-ink); }
 
+/* live operator status — appears once Firestore answers */
+.now-strip {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--doto);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lcd-ink);
+  border-bottom: 1px dotted rgba(38, 48, 31, 0.45);
+  padding: 7px 0 8px;
+}
+
+.now-strip[hidden] { display: none; }
+
+.now-strip .now-label {
+  color: var(--lcd-dim);
+  border: 1px solid var(--lcd-dim);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: 10px;
+}
+
+.now-strip .now-glyph { font-family: var(--mono, monospace); }
+
+.now-strip .now-ago { margin-left: auto; color: var(--lcd-dim); font-size: 10px; }
+
 /* ---------- entries ---------- */
 
 .panel[hidden] { display: none; }
