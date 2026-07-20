@@ -20,21 +20,25 @@ export function initDoc(): void {
 
   const update = () => {
     raf = 0;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    pct = max > 0 ? Math.round((window.scrollY / max) * 100) : 100;
+    // page scroll on desktop; in handheld mode the page is fixed and the
+    // screen's inner window is the scroll surface instead
+    const inner = $('#screenInner');
+    const winMax = document.documentElement.scrollHeight - window.innerHeight;
+    const innerMax = inner ? inner.scrollHeight - inner.clientHeight : 0;
+    const max = winMax > 0 ? winMax : innerMax;
+    const pos = winMax > 0 ? window.scrollY : (inner?.scrollTop ?? 0);
+    pct = max > 0 ? Math.round((pos / max) * 100) : 100;
     pct = Math.max(0, Math.min(100, pct));
     const filled = Math.round((pct / 100) * blocks.length);
     blocks.forEach((b, i) => b.classList.toggle('fill', i < filled));
     renderPct();
   };
 
-  window.addEventListener(
-    'scroll',
-    () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    },
-    { passive: true }
-  );
+  const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  $('#screenInner')?.addEventListener('scroll', onScroll, { passive: true });
   update();
 
   // drive fiction: alternate % and TRK every 6s (§4.4); skip under reduced motion

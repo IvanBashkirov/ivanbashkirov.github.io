@@ -13,6 +13,7 @@ import { initTape } from './tape';
 import { initSnd } from './snd';
 import { initKeys } from './keys';
 import { initErr } from './err';
+import { initHandheld } from './handheld';
 
 initCounter();
 initBoot();
@@ -29,3 +30,4 @@ initTape();
 initSnd();
 initKeys();
 initErr();
+initHandheld();

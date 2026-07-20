@@ -205,7 +205,9 @@ const tabs = [
 
           <div class="bezel">
             <div class:list={['screen', { lcd: !isEink }]} id="screen">
-              <slot />
+              <div class="screen-inner" id="screenInner">
+                <slot />
+              </div>
               {
                 !isEink && (
                   <>
