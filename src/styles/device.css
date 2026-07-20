@@ -1613,6 +1613,137 @@ html.js .js-only { display: revert; }
   .caution { max-width: none; }
 }
 
+/* ---------- handheld mode (§10.2) ----------
+   On phones the whole chassis stays in view, like a unit held in hand:
+   the page never scrolls — only the screen content does (see handheld.ts
+   for gesture redirection from the chassis). Short viewports fall back
+   to the plain scrolling layout above. */
+
+@media (max-width: 720px) and (min-height: 480px) {
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    height: 100dvh;
+    padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+    overscroll-behavior: none;
+  }
+
+  .scene { height: 100%; }
+
+  .unit {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .face { padding: 14px 14px 12px; }
+
+  .face-front {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .face-rear { overscroll-behavior: contain; }
+
+  .s-tl { top: 8px; left: 8px; }
+  .s-tr { top: 8px; right: 8px; }
+  .s-bl { bottom: 8px; left: 8px; }
+  .s-br { bottom: 8px; right: 8px; }
+
+  /* compact top panel: brand left, counter right, single row */
+  .top-panel {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .brand { flex: 1; }
+  .brand-name { font-size: 11.5px; letter-spacing: 0.1em; }
+  .tagline { font-size: 7.5px; letter-spacing: 0.1em; margin-top: 4px; }
+  .counter-block { text-align: right; }
+  .counter-window { padding: 6px 10px; gap: 8px; border-radius: 6px; }
+  .digits { font-size: 22px; }
+  .counter-caption {
+    font-size: 7px;
+    letter-spacing: 0.12em;
+    margin: 4px 0 0 auto;
+    max-width: 150px;
+  }
+
+  .control-row { gap: 10px 12px; margin-bottom: 10px; }
+  .key { padding: 8px 10px 7px; font-size: 10px; letter-spacing: 0.1em; }
+  .knob { width: 42px; height: 42px; }
+  .knob-cap::before { height: 11px; }
+  .ctl-caption { margin-top: 4px; }
+
+  /* the screen takes whatever height is left; content scrolls inside */
+  .bezel {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    padding: 8px;
+  }
+  .screen,
+  body[data-eink] .screen {
+    flex: 1;
+    min-width: 0;
+    min-height: 110px;
+  }
+  .screen.lcd { padding: 0; }
+  .screen-inner {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.lcd .screen-inner { padding: 0 14px 18px; }
+
+  /* the frosted HUD bleeds scrolled text through inside the sub-scroller — go opaque */
+  .hud { background: var(--eink); }
+
+  /* status bar stays put while entries scroll beneath it */
+  .statusbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin: 0 -14px 4px;
+    padding: 12px 14px 8px;
+    background-color: var(--lcd);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px 3px);
+  }
+
+  /* overlays cover the visible glass exactly — center the drive readout */
+  .overlay.readout.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .readout-text { position: static; padding: 0; }
+  .tm-inner { position: static; }
+
+  .drive-row { margin: 10px 2px 0; }
+  .drive-slot { width: 170px; height: 11px; }
+  .drive-caption { font-size: 7.5px; margin-top: 4px; }
+
+  .bottom-panel {
+    margin-top: 10px;
+    gap: 12px;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .spec { font-size: 7.5px; letter-spacing: 0.12em; line-height: 1.9; }
+  .pads { gap: 8px; }
+  .pad { width: 34px; height: 34px; border-radius: 6px; }
+  .pad-label { font-size: 7px; margin-top: 3px; }
+  .pads-hint { display: none; }
+  .caution { display: none; }
+}
+
 /* ---------- reduced motion (§10) ---------- */
 
 @media (prefers-reduced-motion: reduce) {
