@@ -1,0 +1,22 @@
+rules_version = '2';
+
+// IB-01 content database.
+// The whole world may read (the public site builds from these collections);
+// only the operator may write. Keep this email list in sync with
+// "adminEmails" in firebase.config.json.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOperator() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'ibash@protonmail.com',
+          'ivanbashkirov@protonmail.com'
+        ];
+    }
+
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isOperator();
+    }
+  }
+}

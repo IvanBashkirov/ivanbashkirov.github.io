@@ -10,8 +10,8 @@ interface Props {
 
 const { active } = Astro.props;
 
-const log = loadLog();
-const projects = loadProjects();
+const log = await loadLog();
+const projects = await loadProjects();
 const allDocs = await getAllDocs();
 const visibleDocs = await getVisibleDocs();
 const hiddenTune = allDocs.find((d) => d.data.hidden);

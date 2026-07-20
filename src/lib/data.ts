@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { parse } from 'yaml';
+import { firebaseConfigured } from './firebase-config';
+import { fetchCollection, fetchDocument } from './firestore-rest';
 
 export interface LogEntry {
   n: number;
@@ -38,21 +40,49 @@ function normalizeDate(d: unknown): string {
   return String(d);
 }
 
-export function loadSite(): SiteMeta {
+/** Local site.yaml, used as build fallback and as the admin console's seed values. */
+export function loadLocalSite(): SiteMeta {
   const s = parse(read('site.yaml')) as SiteMeta & { londonDeparture: unknown };
   return { ...s, londonDeparture: normalizeDate(s.londonDeparture) };
 }
 
-/** Entries sorted newest-first. Empty log ships an empty device. */
-export function loadLog(): LogEntry[] {
-  const raw = (parse(read('log.yaml')) ?? []) as (LogEntry & { date: unknown })[];
-  return raw
+function sortLog(entries: LogEntry[]): LogEntry[] {
+  return entries
     .map((e) => ({ ...e, date: normalizeDate(e.date) }))
     .sort((a, b) => (a.date === b.date ? b.n - a.n : b.date.localeCompare(a.date)));
 }
 
-export function loadProjects(): Project[] {
-  return (parse(read('projects.yaml')) ?? []) as Project[];
+// Build-time memo: many pages ask for the same data; fetch Firestore once.
+let sitePromise: Promise<SiteMeta> | undefined;
+let logPromise: Promise<LogEntry[]> | undefined;
+let projectsPromise: Promise<Project[]> | undefined;
+
+export function loadSite(): Promise<SiteMeta> {
+  return (sitePromise ??= (async () => {
+    if (!firebaseConfigured) return loadLocalSite();
+    const meta = await fetchDocument('site/meta');
+    if (!meta) return loadLocalSite(); // Firestore live but never initialised
+    return { ...(meta as unknown as SiteMeta), londonDeparture: normalizeDate(meta.londonDeparture) };
+  })());
+}
+
+/** Entries sorted newest-first. Empty log ships an empty device. */
+export function loadLog(): Promise<LogEntry[]> {
+  return (logPromise ??= (async () => {
+    if (!firebaseConfigured) return sortLog((parse(read('log.yaml')) ?? []) as LogEntry[]);
+    const docs = await fetchCollection('log');
+    return sortLog(docs.map((d) => d.data as unknown as LogEntry));
+  })());
+}
+
+export function loadProjects(): Promise<Project[]> {
+  return (projectsPromise ??= (async () => {
+    if (!firebaseConfigured) return ((parse(read('projects.yaml')) ?? []) as Project[]);
+    const docs = await fetchCollection('projects');
+    return docs
+      .map((d) => d.data as unknown as Project)
+      .sort((a, b) => a.ch.localeCompare(b.ch));
+  })());
 }
 
 export const latestShip = (log: LogEntry[]) => log.find((e) => e.type === 'ship');
