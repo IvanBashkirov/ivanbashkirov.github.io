@@ -9,7 +9,7 @@ import { loadSite, loadLog, loadProjects } from '../lib/data';
 import { getVisibleDocs } from '../lib/docs';
 
 interface Props {
-  mode: 'activity' | 'projects' | 'writing' | 'notes' | 'doc' | 'thought' | 'rear' | 'error';
+  mode: 'activity' | 'projects' | 'writing' | 'doc' | 'thought' | 'rear' | 'error';
   title: string;
   description?: string;
   ogImage?: string;
@@ -26,10 +26,16 @@ await getVisibleDocs();
 const building = projects.some((p) => p.status === 'rec');
 const isEink = mode === 'doc' || mode === 'thought';
 // /rear's front face is the activity page, so it gets the full log control set
-const isLog = ['activity', 'projects', 'writing', 'notes', 'rear'].includes(mode);
+const isLog = ['activity', 'projects', 'writing', 'rear'].includes(mode);
 const tabMode = mode === 'rear' ? 'activity' : mode;
-// mode dial position for this page (ALL / PROJ / TXT / NOTE)
-const dialIdx = Math.max(0, ['activity', 'projects', 'writing', 'notes'].indexOf(tabMode));
+// mode dial position for this page (LOG / PROJ / TXT)
+const dialIdx = Math.max(0, ['activity', 'projects', 'writing'].indexOf(tabMode));
+
+const tabs = [
+  { id: 'activity', label: 'LOG', href: '/' },
+  { id: 'projects', label: 'PROJ', href: '/projects' },
+  { id: 'writing', label: 'TXT', href: '/writing' },
+] as const;
 
 const desc = description ?? `Ivan Bashkirov's public shipping log. Code, essays, tunes. Tbilisi.`;
 const og = new URL(ogImage ?? '/og/default.png', Astro.site);
@@ -112,44 +118,35 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           </header>
 
           <nav class="control-row" aria-label="Device controls">
-            <span class="ctl-spacer"></span>
             {
               isLog && (
-                <>
-                  <div class="knob-group js-only">
-                    <div class="knob-labels" aria-hidden="true">
-                      <span class={dialIdx === 0 ? 'active' : ''}>ALL</span>
-                      <span class={dialIdx === 1 ? 'active' : ''}>PROJ</span>
-                      <span class={dialIdx === 2 ? 'active' : ''}>TXT</span>
-                      <span class={dialIdx === 3 ? 'active' : ''}>NOTE</span>
-                    </div>
-                    <button
-                      class="knob"
-                      id="knob"
-                      role="slider"
-                      aria-label="Mode dial"
-                      aria-valuemin="0"
-                      aria-valuemax="3"
-                      aria-valuenow={dialIdx}
-                      aria-valuetext={['All — activity log', 'Projects', 'Writing', 'Notes'][dialIdx]}
-                    >
-                      <span
-                        class="knob-cap"
-                        id="knobCap"
-                        style={`transform: rotate(${-22.5 + dialIdx * 15}deg)`}
-                      />
-                    </button>
-                    <div class="ctl-caption">MODE</div>
+                <div class="knob-group js-only">
+                  <div class="knob-labels" aria-hidden="true">
+                    <span class={dialIdx === 0 ? 'active' : ''}>LOG</span>
+                    <span class={dialIdx === 1 ? 'active' : ''}>PROJ</span>
+                    <span class={dialIdx === 2 ? 'active' : ''}>TXT</span>
                   </div>
-                </>
+                  <button
+                    class="knob"
+                    id="knob"
+                    role="slider"
+                    aria-label="Mode dial"
+                    aria-valuemin="0"
+                    aria-valuemax="2"
+                    aria-valuenow={dialIdx}
+                    aria-valuetext={['Log — everything', 'Projects', 'Writing'][dialIdx]}
+                  >
+                    <span
+                      class="knob-cap"
+                      id="knobCap"
+                      style={`transform: rotate(${-15 + dialIdx * 15}deg)`}
+                    />
+                  </button>
+                  <div class="ctl-caption">MODE</div>
+                </div>
               )
             }
-            <div class="snd-group js-only">
-              <button class="snd" id="snd" role="switch" aria-checked="false" aria-label="Sound">
-                <span class="snd-thumb"></span>
-              </button>
-              <div class="ctl-caption">SND OFF/ON</div>
-            </div>
+            <span class="ctl-spacer"></span>
             {
               isEink && (
                 <a class="eject-key" id="eject" href="/writing">
@@ -199,20 +196,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
               IB-01 · @{site.x}
               <a class="rear-link" id="rearLink" href="/rear">REAR ↻</a>
             </div>
-            <div class="pads-group">
-              <div class="pads">
-                {
-                  (['KCK', 'SNR', 'HAT', 'CBL'] as const).map((p) => (
-                    <span class="pad-cell">
-                      <button class="pad" data-pad={p.toLowerCase()} aria-label={`${p} pad`} />
-                      <span class="pad-label" aria-hidden="true">
-                        {p}
-                      </span>
-                    </span>
-                  ))
-                }
-              </div>
-            </div>
+            <nav class="modes" aria-label="Modes">
+              {
+                tabs.map((t) => (
+                  <a
+                    class="key mode-key"
+                    id={`tab-${t.id}`}
+                    href={t.href}
+                    data-tab={t.id}
+                    aria-current={isLog && tabMode === t.id ? 'page' : undefined}
+                    aria-selected={isLog ? (tabMode === t.id ? 'true' : 'false') : undefined}
+                  >
+                    <span class="key-led" aria-hidden="true" />
+                    {t.label}
+                  </a>
+                ))
+              }
+            </nav>
           </footer>
         </main>
 
@@ -224,7 +224,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           <div class="rear-inner">
             <div class="rear-head">
               <span class="rear-title">IB-01 — REAR PANEL</span>
-              <a class="rear-link" id="rearClose" href="/">FRONT ↻</a>
+              <div class="sticker" aria-hidden="true">
+                <div class="barcode"></div>
+                <div class="sn">IB-01</div>
+              </div>
             </div>
 
             <div class="ports" aria-hidden="true">
@@ -242,11 +245,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
               </div>
             </div>
 
-            <div class="sticker" aria-hidden="true">
-              <div class="barcode"></div>
-              <div class="sn">IB-01</div>
-            </div>
-
             <p class="rear-bio">{site.bio}</p>
 
             <div class="rear-contacts">
@@ -259,16 +257,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
             <table class="shortcuts">
               <caption>OPERATOR SHORTCUTS</caption>
               <tbody>
-                <tr><td>1 / 2 / 3 / 4</td><td>ALL / PROJ / TXT / NOTE</td></tr>
+                <tr><td>1 / 2 / 3</td><td>LOG / PROJ / TXT</td></tr>
                 <tr><td>J / K</td><td>MOVE ENTRY CURSOR</td></tr>
                 <tr><td>ENTER</td><td>OPEN ATTACHED DOC</td></tr>
                 <tr><td>E</td><td>EJECT DOC</td></tr>
                 <tr><td>F</td><td>CYCLE MODE DIAL</td></tr>
-                <tr><td>S</td><td>SOUND TOGGLE</td></tr>
                 <tr><td>?</td><td>REAR PANEL</td></tr>
                 <tr><td>ESC</td><td>BACK / DISMISS</td></tr>
               </tbody>
             </table>
+
+            <div class="rear-foot">
+              <a class="rear-link" id="rearClose" href="/">FRONT ↻</a>
+            </div>
           </div>
         </div>
       </div>

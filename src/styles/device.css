@@ -1609,6 +1609,14 @@ body[data-eink] .screen {
 
 /* ---------- flying disk ---------- */
 
+.rear-foot { margin-top: 8px; }
+.rear-foot .rear-link { margin-left: 0; }
+
+/* thoughts merged into the LOG stream reuse the t-body typography */
+.entry .t-body { font-size: 14.5px; line-height: 1.65; max-width: 60ch; }
+.entry .t-body p { margin: 0.5em 0 0; }
+.entry .t-body p:first-child { margin-top: 0; }
+
 #flying-disk {
   position: fixed;
   z-index: 9999;
@@ -1616,6 +1624,14 @@ body[data-eink] .screen {
   will-change: transform;
   left: 0;
   top: 0;
+  /* the in-flight disk tips toward the slot in 3D */
+  perspective: 700px;
+}
+
+#flying-disk .disk {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, clip-path;
 }
 
 #flying-disk[hidden] { display: none; }

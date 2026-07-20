@@ -3,7 +3,6 @@
 import { isEink, isLogPage, isTyping } from './util';
 import { activate, flip, isFlipped } from './nav';
 import { cycleDial } from './knob';
-import { toggleSound } from './snd';
 import { moveCursor, openCursor } from './cursor';
 import { ejectDoc } from './disk';
 import { testModeClose, testModeOpen } from './konami';
@@ -12,7 +11,6 @@ const MODE_KEYS: Record<string, string> = {
   '1': 'activity',
   '2': 'projects',
   '3': 'writing',
-  '4': 'notes',
 };
 
 export function initKeys(): void {
@@ -29,7 +27,6 @@ export function initKeys(): void {
       case '1':
       case '2':
       case '3':
-      case '4':
         if (isLogPage() && !isFlipped()) activate(MODE_KEYS[e.key]);
         break;
       case 'j':
@@ -46,9 +43,6 @@ export function initKeys(): void {
         break;
       case 'f':
         if (isLogPage() && !isFlipped()) cycleDial();
-        break;
-      case 's':
-        toggleSound();
         break;
       case '?':
         flip(!isFlipped());

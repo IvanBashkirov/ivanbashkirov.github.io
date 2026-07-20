@@ -1,20 +1,19 @@
-/* Mode switching (driven by the dial + keyboard) + rear-panel flip + popstate. */
+/* Mode switching (dial, bottom buttons, keyboard) + rear-panel flip + popstate. */
 
-import { $, mode, reduced } from './util';
+import { $, $$, mode, reduced } from './util';
 import * as sfx from './audio';
 
 const ROUTES: Record<string, string> = {
   activity: '/',
   projects: '/projects',
   writing: '/writing',
-  notes: '/notes',
 };
 const TITLES: Record<string, string> = {
   activity: 'IVAN BASHKIROV — IB-01 · SHIPPING LOG',
   projects: 'PROJECTS — IB-01 · IVAN BASHKIROV',
   writing: 'WRITING — IB-01 · IVAN BASHKIROV',
-  notes: 'NOTES — IB-01 · IVAN BASHKIROV',
 };
+const MODE_LABELS: Record<string, string> = { activity: 'LOG', projects: 'PROJ', writing: 'TXT' };
 
 const hasPanels = (): boolean => !!$('#panel-activity');
 
@@ -23,7 +22,6 @@ function modeFor(path: string): string | null {
   if (p === '/') return 'activity';
   if (p === '/projects') return 'projects';
   if (p === '/writing') return 'writing';
-  if (p === '/notes') return 'notes';
   if (p === '/rear') return 'rear';
   return null;
 }
@@ -42,12 +40,14 @@ export function activate(m: string, push = true): void {
   if (document.body.dataset.mode !== m) flickScreen();
   for (const id of Object.keys(ROUTES)) {
     const panel = $(`#panel-${id}`);
+    const tab = $(`#tab-${id}`);
     if (panel) panel.hidden = id !== m;
+    if (tab) tab.setAttribute('aria-selected', id === m ? 'true' : 'false');
   }
   const statusMode = $('#statusMode');
   const statusInfo = $('#statusInfo');
   const panel = $(`#panel-${m}`);
-  if (statusMode) statusMode.textContent = `MODE: ${m.toUpperCase()}`;
+  if (statusMode) statusMode.textContent = `MODE: ${MODE_LABELS[m] ?? m.toUpperCase()}`;
   if (statusInfo && panel) statusInfo.textContent = `${panel.dataset.count} · PWR ∞`;
   document.body.dataset.mode = m;
   document.title = TITLES[m];
@@ -114,6 +114,19 @@ export function flip(on: boolean, push = true): void {
 }
 
 export function initNav(): void {
+  // bottom-panel mode buttons (real links on doc pages, panel swaps on log pages)
+  for (const tab of $$('.mode-key')) {
+    tab.addEventListener('click', (e) => {
+      const m = (tab as HTMLElement).dataset.tab!;
+      if (!hasPanels()) return; // real navigation on doc pages
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      sfx.click();
+      if (isFlipped()) flip(false, false);
+      activate(m, true);
+    });
+  }
+
   // rear affordances
   $('#rearLink')?.addEventListener('click', (e) => {
     e.preventDefault();

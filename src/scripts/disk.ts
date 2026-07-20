@@ -9,6 +9,11 @@ const ORIGIN_FLAG = 'ib01-origin';
 const LOG_ROUTES = ['/', '/projects', '/writing'];
 
 let busy = false;
+/** Source element hidden while its disk is in flight (restored on bfcache back). */
+let hiddenSrc: HTMLElement | null = null;
+
+/** How far the disk tips over while approaching the slot (near edge-on). */
+const FLAT_DEG = 78;
 
 const ss = {
   get: (k: string) => {
@@ -171,40 +176,53 @@ async function loadSequence(a: HTMLAnchorElement): Promise<void> {
   const cx0 = srcRect.left + srcRect.width / 2;
   const cy0 = srcRect.top + srcRect.height / 2;
 
+  // the disk leaves the box — it is not copied
+  if (isDiskEl) {
+    hiddenSrc = a;
+    a.style.visibility = 'hidden';
+  }
+
   const slot = $('#driveSlot')!.getBoundingClientRect();
   const s1 = (slot.width * 0.86) / st.w;
   const cx1 = slot.left + slot.width / 2;
-  const cy1 = slot.top - (st.h * s1) / 2 + 3;
+  // tipped nearly edge-on, the disk's visible half-height collapses by cos(FLAT_DEG)
+  const flatHalf = ((st.h * s1) / 2) * Math.cos((FLAT_DEG * Math.PI) / 180);
+  const cy1 = slot.top + 2 - flatHalf;
 
   st.fly.style.transform = centerTransform(st, cx0, cy0, s0);
   if (!isDiskEl) st.fly.style.opacity = '0';
 
-  // PICKED — 120ms
+  // PICKED — 120ms, lifted off the box
   await animate(st.fly, [
     { transform: centerTransform(st, cx0, cy0, s0), opacity: isDiskEl ? 1 : 0 },
     { transform: centerTransform(st, cx0, cy0 - 6, s0 * 1.04), opacity: 1 },
   ], { duration: 120, easing: 'ease-out' });
   if (cancelled) return;
 
-  // TRAVEL — 450ms, slight arc
+  // TRAVEL — 480ms slight arc while tipping over to near edge-on
   const midY = Math.min(cy0, cy1) - 40;
+  void animate(st.clone, [
+    { transform: 'rotateX(0deg)' },
+    { transform: 'rotateX(30deg)', offset: 0.45 },
+    { transform: `rotateX(${FLAT_DEG}deg)` },
+  ], { duration: 480, easing: 'cubic-bezier(.3,.7,.3,1)' });
   await animate(st.fly, [
     { transform: centerTransform(st, cx0, cy0 - 6, s0 * 1.04) },
     { transform: centerTransform(st, (cx0 + cx1) / 2, midY, (s0 + s1) / 2), offset: 0.5 },
     { transform: centerTransform(st, cx1, cy1, s1) },
-  ], { duration: 450, easing: 'cubic-bezier(.3,.7,.3,1)' });
+  ], { duration: 480, easing: 'cubic-bezier(.3,.7,.3,1)' });
   if (cancelled) return;
 
-  // INSERT — 180ms, bottom 60% progressively clipped by the slot
-  const drop = st.h * s1 * 0.6;
+  // INSERT — 200ms, the flattened disk is pushed into the slot mouth
+  const drop = flatHalf * 2 + 4;
   void animate(st.clone, [
-    { clipPath: 'inset(0 0 0% 0)' },
-    { clipPath: 'inset(0 0 62% 0)' },
-  ], { duration: 180, easing: 'ease-in' });
+    { transform: `rotateX(${FLAT_DEG}deg)`, clipPath: 'inset(0 0 0% 0)' },
+    { transform: `rotateX(${FLAT_DEG + 6}deg)`, clipPath: 'inset(0 0 88% 0)' },
+  ], { duration: 200, easing: 'ease-in' });
   await animate(st.fly, [
     { transform: centerTransform(st, cx1, cy1, s1) },
     { transform: centerTransform(st, cx1, cy1 + drop, s1) },
-  ], { duration: 180, easing: 'ease-in' });
+  ], { duration: 200, easing: 'ease-in' });
   if (cancelled) return;
 
   // CHUNK — 80ms
@@ -307,21 +325,25 @@ async function maybeEjectReturn(): Promise<void> {
   const kind = home?.dataset.kind ?? 'essay';
 
   const st = mountClone(homeVisible ? home : null, kind);
+  // the disk is coming home — its box slot stays empty until it lands
+  if (homeVisible && home) home.style.visibility = 'hidden';
   const slot = $('#driveSlot')!.getBoundingClientRect();
   const s1 = (slot.width * 0.86) / st.w;
   const cx1 = slot.left + slot.width / 2;
-  const cy1 = slot.top - (st.h * s1) / 2 + 3;
-  const drop = st.h * s1 * 0.6;
+  const flatHalf = ((st.h * s1) / 2) * Math.cos((FLAT_DEG * Math.PI) / 180);
+  const cy1 = slot.top + 2 - flatHalf;
+  const drop = flatHalf * 2 + 4;
 
   led(true);
   sfx.eject();
-  st.clone.style.clipPath = 'inset(0 0 62% 0)';
+  st.clone.style.transform = `rotateX(${FLAT_DEG}deg)`;
+  st.clone.style.clipPath = 'inset(0 0 88% 0)';
   st.fly.style.transform = centerTransform(st, cx1, cy1 + drop, s1);
 
-  // pop out with overshoot spring
+  // pop out edge-on with overshoot spring
   void animate(st.clone, [
-    { clipPath: 'inset(0 0 62% 0)' },
-    { clipPath: 'inset(0 0 0% 0)' },
+    { transform: `rotateX(${FLAT_DEG}deg)`, clipPath: 'inset(0 0 88% 0)' },
+    { transform: `rotateX(${FLAT_DEG}deg)`, clipPath: 'inset(0 0 0% 0)' },
   ], { duration: 220, easing: 'ease-out' });
   await animate(st.fly, [
     { transform: centerTransform(st, cx1, cy1 + drop, s1) },
@@ -331,7 +353,12 @@ async function maybeEjectReturn(): Promise<void> {
   led(false);
 
   if (homeVisible && home) {
+    // fly home, unfolding from edge-on back to face-on
     const r = home.getBoundingClientRect();
+    void animate(st.clone, [
+      { transform: `rotateX(${FLAT_DEG}deg)` },
+      { transform: 'rotateX(0deg)' },
+    ], { duration: 400, easing: 'cubic-bezier(.3,.7,.3,1)' });
     await animate(st.fly, [
       { transform: centerTransform(st, cx1, cy1, s1), opacity: 1 },
       {
@@ -339,6 +366,7 @@ async function maybeEjectReturn(): Promise<void> {
         opacity: 1,
       },
     ], { duration: 400, easing: 'cubic-bezier(.3,.7,.3,1)' });
+    home.style.visibility = '';
   } else {
     await animate(st.fly, [
       { transform: centerTransform(st, cx1, cy1, s1), opacity: 1 },
@@ -376,5 +404,9 @@ export function initDisk(): void {
     hideReadout();
     led(false);
     $('#screen')?.classList.remove('flash');
+    if (hiddenSrc) {
+      hiddenSrc.style.visibility = '';
+      hiddenSrc = null;
+    }
   });
 }

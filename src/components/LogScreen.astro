@@ -1,10 +1,10 @@
 ---
-import { loadLog, loadProjects, groupByMonth, fmtDate, fmtDay } from '../lib/data';
+import { loadLog, loadProjects, monthLabel, fmtDate, fmtDay, type LogEntry, type Project } from '../lib/data';
 import { getVisibleDocs, getAllDocs, docBySlug, type Doc } from '../lib/docs';
 import DiskGlyph from './DiskGlyph.astro';
 
 interface Props {
-  active: 'activity' | 'projects' | 'writing' | 'notes';
+  active: 'activity' | 'projects' | 'writing';
 }
 
 const { active } = Astro.props;
@@ -15,23 +15,57 @@ const allDocs = await getAllDocs();
 const visibleDocs = await getVisibleDocs();
 const hiddenTune = allDocs.find((d) => d.data.hidden);
 
-const months = groupByMonth(log);
-
 const TAGS: Record<string, string> = { ship: 'SHIP', txt: 'TXT', note: 'NOTE' };
-
-const modeCounts = {
-  activity: `${log.length} ENTRIES`,
-  projects: `${projects.length} CHANNELS`,
-  writing: `${visibleDocs.length} DOCS`,
-  notes: 'LIVE FEED',
+const MODE_LABEL: Record<Props['active'], string> = {
+  activity: 'LOG',
+  projects: 'PROJ',
+  writing: 'TXT',
 };
 
-function diskMeta(d: Doc): [string, string] {
-  return [
-    `DOC ${d.data.ref} · ${d.data.kind.toUpperCase()}`,
-    `${fmtDate(d.dateStr)} · ${d.data.hidden ? '???' : d.sizeKB} KB`,
-  ];
+/* The LOG view is one chronological stream: log entries, docs, projects.
+   Projects only carry a year, so they sort to the top of that year. */
+type FeedItem = { date: string; dateLabel: string; groupLabel: string } & (
+  | { kind: 'log'; entry: LogEntry }
+  | { kind: 'doc'; doc: Doc }
+  | { kind: 'proj'; proj: Project }
+);
+
+const feed: FeedItem[] = [
+  ...log.map((entry) => ({
+    date: entry.date,
+    dateLabel: fmtDay(entry.date),
+    groupLabel: monthLabel(entry.date),
+    kind: 'log' as const,
+    entry,
+  })),
+  ...visibleDocs.map((doc) => ({
+    date: doc.dateStr,
+    dateLabel: fmtDay(doc.dateStr),
+    groupLabel: monthLabel(doc.dateStr),
+    kind: 'doc' as const,
+    doc,
+  })),
+  ...projects.map((proj) => ({
+    date: `${proj.year}-12-31`,
+    dateLabel: proj.year,
+    groupLabel: proj.year,
+    kind: 'proj' as const,
+    proj,
+  })),
+].sort((a, b) => b.date.localeCompare(a.date));
+
+const feedGroups: { label: string; items: FeedItem[] }[] = [];
+for (const item of feed) {
+  const last = feedGroups[feedGroups.length - 1];
+  if (last && last.label === item.groupLabel) last.items.push(item);
+  else feedGroups.push({ label: item.groupLabel, items: [item] });
 }
+
+const modeCounts = {
+  activity: `${feed.length} ENTRIES`,
+  projects: `${projects.length} CHANNELS`,
+  writing: `${visibleDocs.length} DOCS`,
+};
 
 function projLinkLabel(link: string): string {
   if (link.startsWith('/doc/')) return 'post-mortem';
@@ -41,7 +75,7 @@ function projLinkLabel(link: string): string {
 ---
 
 <div class="statusbar" aria-hidden="true">
-  <span id="statusMode">MODE: {active.toUpperCase()}</span>
+  <span id="statusMode">MODE: {MODE_LABEL[active]}</span>
   <span class="status-right">
     <span id="statusFlash"></span>
     <span id="statusInfo">{modeCounts[active]} · PWR ∞</span>
@@ -54,32 +88,72 @@ function projLinkLabel(link: string): string {
 <section
   class="panel"
   id="panel-activity"
-  aria-label="Activity log"
+  aria-label="Log — everything"
   data-count={modeCounts.activity}
-  data-static-entries={log.length}
+  data-static-entries={feed.length}
   hidden={active !== 'activity'}
 >
-  {log.length === 0 && <p class="empty-state">LOG EMPTY · NOTHING HAS SHIPPED YET · THE COUNTER IS WAITING</p>}
+  {feed.length === 0 && <p class="empty-state">LOG EMPTY · NOTHING HAS SHIPPED YET</p>}
   {
-    months.map((m) => (
+    feedGroups.map((g) => (
       <div class="month-group">
         <div class="month-divider" aria-hidden="true">
-          {m.label}
+          {g.label}
         </div>
         <ol class="entries">
-          {m.items.map((e) => {
-            const doc = docBySlug(allDocs, e.doc);
+          {g.items.map((item) => {
+            if (item.kind === 'log') {
+              const e = item.entry;
+              const doc = docBySlug(allDocs, e.doc);
+              return (
+                <li class="entry" data-type={e.type}>
+                  <div class="meta">
+                    <span class="e-date">{item.dateLabel}</span>
+                    <span class={`tag tag-${e.type}`}>{TAGS[e.type]}</span>
+                  </div>
+                  <p class="line">{e.text}</p>
+                  {doc && (
+                    <a class="attach" href={doc.url} data-doc={doc.slug} data-kind={doc.data.kind}>
+                      attached: “{doc.data.title}”<DiskGlyph />
+                    </a>
+                  )}
+                </li>
+              );
+            }
+            if (item.kind === 'doc') {
+              const d = item.doc;
+              return (
+                <li class="entry" data-type="doc">
+                  <div class="meta">
+                    <span class="e-date">{item.dateLabel}</span>
+                    <span class="tag tag-txt">DOC</span>
+                  </div>
+                  <p class="line">
+                    <a class="attach" href={d.url} data-doc={d.slug} data-kind={d.data.kind}>
+                      “{d.data.title}”<DiskGlyph />
+                    </a>
+                  </p>
+                </li>
+              );
+            }
+            const p = item.proj;
             return (
-              <li class="entry" data-type={e.type}>
+              <li class="entry" data-type="proj" data-status={p.status}>
                 <div class="meta">
-                  <span class="e-date">{fmtDay(e.date)}</span>
-                  <span class={`tag tag-${e.type}`}>{TAGS[e.type]}</span>
-                  <span class="e-n">Nº {String(e.n).padStart(3, '0')}</span>
+                  <span class="e-date">{item.dateLabel}</span>
+                  <span class="tag tag-ship">PROJ</span>
                 </div>
-                <p class="line">{e.text}</p>
-                {doc && (
-                  <a class="attach" href={doc.url} data-doc={doc.slug} data-kind={doc.data.kind}>
-                    attached: “{doc.data.title}”<DiskGlyph />
+                <p class="line">
+                  <b>{p.name}</b> — {p.desc}
+                </p>
+                {p.link && (
+                  <a
+                    class="attach"
+                    href={p.link}
+                    data-doc={p.link.startsWith('/doc/') ? p.link.split('/')[2] : undefined}
+                    data-kind={p.link.startsWith('/doc/') ? 'essay' : undefined}
+                  >
+                    {projLinkLabel(p.link)}
                   </a>
                 )}
               </li>
@@ -98,7 +172,6 @@ function projLinkLabel(link: string): string {
   data-count={modeCounts.projects}
   hidden={active !== 'projects'}
 >
-  <div class="month-divider" aria-hidden="true">CHANNELS</div>
   {projects.length === 0 && <p class="empty-state">NO CHANNELS PATCHED</p>}
   <ol class="channels">
     {
@@ -139,29 +212,21 @@ function projLinkLabel(link: string): string {
   hidden={active !== 'writing'}
 >
   <div class="diskbox-wrap">
-    <div class="diskbox-title" aria-hidden="true">DISK BOX</div>
     {visibleDocs.length === 0 && !hiddenTune && (
       <p class="empty-state">DISK BOX EMPTY · NO DOCS ON FILE</p>
     )}
     <ul class="diskbox" hidden={visibleDocs.length === 0 && !hiddenTune}>
       {
-        visibleDocs.map((d) => {
-          const [m1, m2] = diskMeta(d);
-          return (
-            <li>
-              <a class="disk" href={d.url} data-doc={d.slug} data-kind={d.data.kind}>
-                <span class="label">
-                  <span class="d-title">{d.data.title}</span>
-                  <span class="d-meta">
-                    {m1}
-                    <br />
-                    {m2}
-                  </span>
-                </span>
-              </a>
-            </li>
-          );
-        })
+        visibleDocs.map((d) => (
+          <li>
+            <a class="disk" href={d.url} data-doc={d.slug} data-kind={d.data.kind}>
+              <span class="label">
+                <span class="d-title">{d.data.title}</span>
+                <span class="d-meta">{fmtDate(d.dateStr)}</span>
+              </span>
+            </a>
+          </li>
+        ))
       }
       {
         hiddenTune && (
@@ -174,11 +239,7 @@ function projLinkLabel(link: string): string {
             >
               <span class="label">
                 <span class="d-title">{hiddenTune.data.title}</span>
-                <span class="d-meta">
-                  DOC ??? · TUNE
-                  <br />
-                  {fmtDate(hiddenTune.dateStr)} · ??? KB
-                </span>
+                <span class="d-meta">{fmtDate(hiddenTune.dateStr)}</span>
               </span>
             </a>
           </li>
@@ -186,18 +247,4 @@ function projLinkLabel(link: string): string {
       }
     </ul>
   </div>
-
-</section>
-
-<section
-  class="panel"
-  id="panel-notes"
-  aria-label="Notes"
-  data-count={modeCounts.notes}
-  hidden={active !== 'notes'}
->
-  <div class="month-divider" aria-hidden="true">NOTES</div>
-  <p class="empty-state" id="notesEmpty">FEED OFFLINE · NOTHING ON AIR</p>
-  <!-- short thoughts live in Firestore; populated at runtime -->
-  <div class="thought-stream" id="thoughtStream"></div>
 </section>

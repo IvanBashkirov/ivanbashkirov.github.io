@@ -4,13 +4,8 @@ const KEY = 'ib01-snd';
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
+// sound is retired for now — the switch is gone, so nothing ever enables it
 let enabled = false;
-
-try {
-  enabled = localStorage.getItem(KEY) === '1';
-} catch {
-  /* private mode */
-}
 
 export const soundOn = (): boolean => enabled;
 

@@ -1,20 +1,19 @@
-/* MODE dial: 4 detents (ALL / PROJ / TXT / NOTE), click to cycle, drag to
-   rotate, keyboard slider. The dial is the device's only navigation. */
+/* MODE dial: 3 detents (LOG / PROJ / TXT), click to cycle, drag to rotate,
+   keyboard slider. Mirrors the bottom-panel mode buttons. */
 
 import { $, $$, mode } from './util';
 import { activate } from './nav';
 import * as sfx from './audio';
 
-const MODES = ['activity', 'projects', 'writing', 'notes'] as const;
-const DIAL = ['ALL', 'PROJ', 'TXT', 'NOTE'];
-const LABELS = ['All — activity log', 'Projects', 'Writing — disk box', 'Notes'];
+const MODES = ['activity', 'projects', 'writing'] as const;
+const LABELS = ['Log — everything', 'Projects', 'Writing — disk box'];
 
 let idx = 0;
 
 function renderKnob(): void {
   const cap = $('#knobCap');
   const knob = $('#knob');
-  if (cap) cap.style.transform = `rotate(${-22.5 + idx * 15}deg)`;
+  if (cap) cap.style.transform = `rotate(${-15 + idx * 15}deg)`;
   if (knob) {
     knob.setAttribute('aria-valuenow', String(idx));
     knob.setAttribute('aria-valuetext', LABELS[idx]);
@@ -69,7 +68,7 @@ export function initKnob(): void {
     const delta = e.clientX + -e.clientY - dragStart;
     const steps = Math.round(delta / 30);
     if (steps !== 0) moved = true;
-    const target = Math.min(3, Math.max(0, dragBase + steps));
+    const target = Math.min(MODES.length - 1, Math.max(0, dragBase + steps));
     setDial(target);
   });
 
@@ -87,7 +86,7 @@ export function initKnob(): void {
   knob.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
       e.preventDefault();
-      setDial(Math.min(3, idx + 1));
+      setDial(Math.min(MODES.length - 1, idx + 1));
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
       e.preventDefault();
       setDial(Math.max(0, idx - 1));
@@ -96,7 +95,7 @@ export function initKnob(): void {
       setDial(0);
     } else if (e.key === 'End') {
       e.preventDefault();
-      setDial(3);
+      setDial(MODES.length - 1);
     }
   });
 }

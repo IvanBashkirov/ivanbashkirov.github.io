@@ -10,9 +10,9 @@ runtime so they update the instant you save — no rebuild:
 - **STATUS** — the "NOW" strip on the front panel: a preset (working, workout,
   eating, travelling, vacation, at a session, sleeping, offline — each with a
   glyph) plus optional free text ("leg day", "exploring Athens").
-- **FEED** — short thoughts (the NOTE screen, with minimal markdown) and
-  activities (untagged lines in the activity log). Either can carry a link,
-  which makes the entry clickable on the device.
+- **FEED** — short thoughts (tagged THOUGHT, with minimal markdown) and
+  activities (untagged lines). Both land in the LOG view, interleaved with
+  everything else. Either can carry a link, which makes the entry clickable.
 
 Both are edited at **`/admin`** on the live site, behind a login only you have.
 Until Firebase is configured, the site simply shows no status and no thoughts.

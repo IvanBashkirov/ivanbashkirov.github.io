@@ -15,8 +15,8 @@ const { prev, next } = doc.data.hidden ? {} : neighbours(all, doc.slug);
 const kind = doc.data.kind;
 const isTune = kind === 'tune';
 const isThought = kind === 'thought';
-const kicker = `${kind.toUpperCase()} · DOC ${doc.data.ref} · ${fmtDate(doc.dateStr)}`;
-const hudTitle = `DOC ${doc.data.ref} · ${doc.data.title.toUpperCase()}`;
+const kicker = fmtDate(doc.dateStr);
+const hudTitle = doc.data.title.toUpperCase();
 ---
 
 <div class="hud" id="hud" aria-hidden="true">
@@ -38,9 +38,7 @@ const hudTitle = `DOC ${doc.data.ref} · ${doc.data.title.toUpperCase()}`;
     </div>
     <h1 class="doc-title">{doc.data.title}</h1>
     {doc.data.standfirst && <p class="standfirst">{doc.data.standfirst}</p>}
-    <div class="doc-meta">
-      {doc.minutes} MIN READ · {doc.words} WORDS · {doc.data.hidden ? '???' : doc.sizeKB} KB
-    </div>
+    <div class="doc-meta">{doc.minutes} MIN READ</div>
   </header>
 
   {
@@ -79,7 +77,7 @@ const hudTitle = `DOC ${doc.data.ref} · ${doc.data.title.toUpperCase()}`;
       <nav class="doc-nav" aria-label="Adjacent docs">
         {prev ? (
           <a href={prev.url} class="prev-doc">
-            <span class="dir">← PREV DOC {prev.data.ref}</span>
+            <span class="dir">← PREV</span>
             <span class="doc-nav-title">{prev.data.title}</span>
           </a>
         ) : (
@@ -87,7 +85,7 @@ const hudTitle = `DOC ${doc.data.ref} · ${doc.data.title.toUpperCase()}`;
         )}
         {next ? (
           <a href={next.url} class="next-doc">
-            <span class="dir">NEXT DOC {next.data.ref} →</span>
+            <span class="dir">NEXT →</span>
             <span class="doc-nav-title">{next.data.title}</span>
           </a>
         ) : (
