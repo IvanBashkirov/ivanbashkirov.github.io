@@ -1,0 +1,114 @@
+---
+import '@fontsource/doto/latin-700.css';
+import '@fontsource/doto/latin-900.css';
+import '@fontsource/fragment-mono/latin-400.css';
+import '../styles/admin.css';
+import { firebaseConfigured } from '../lib/firebase-config';
+import { STATUS_PRESETS } from '../lib/status-presets';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IB-01 · SERVICE MODE</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#191919" />
+  </head>
+  <body data-configured={firebaseConfigured ? '1' : '0'}>
+    <div class="svc">
+      <header class="svc-head">
+        <div class="svc-brand">
+          <b>IB-01</b> SERVICE MODE
+          <span class="svc-sub">LIVE CHANNELS: STATUS + THOUGHTS · EVERYTHING ELSE SHIPS VIA GIT</span>
+        </div>
+        <div class="svc-session" id="sessionBox" hidden>
+          <span class="svc-who" id="whoami"></span>
+          <button class="btn" id="signOutBtn">SIGN OUT</button>
+        </div>
+      </header>
+
+      <!-- Firebase not configured yet -->
+      <section class="card" id="notConfigured" hidden>
+        <h2>NO UPLINK CONFIGURED</h2>
+        <p>
+          <code>firebase.config.json</code> still contains placeholder values. Create a Firebase
+          project, then paste its web-app config into that file and redeploy. Full walkthrough:
+          <code>FIREBASE-SETUP.md</code> in the repository root.
+        </p>
+      </section>
+
+      <!-- Login gate -->
+      <section class="card gate" id="gate" hidden>
+        <h2>OPERATOR LOGIN</h2>
+        <form id="loginForm">
+          <label>EMAIL <input type="email" id="loginEmail" autocomplete="username" required /></label>
+          <label>PASSWORD <input type="password" id="loginPassword" autocomplete="current-password" required /></label>
+          <button class="btn btn-wide" type="submit">ENGAGE</button>
+          <p class="err" id="loginErr" role="alert"></p>
+        </form>
+      </section>
+
+      <!-- Console -->
+      <main id="console" hidden>
+        <nav class="tabs" role="tablist">
+          <button class="tab active" data-tab="status" role="tab" aria-selected="true">STATUS</button>
+          <button class="tab" data-tab="thoughts" role="tab" aria-selected="false">THOUGHTS</button>
+        </nav>
+
+        <!-- STATUS: what the operator is doing right now -->
+        <section class="pane" id="pane-status" role="tabpanel">
+          <div class="card">
+            <h2>OPERATOR STATUS</h2>
+            <p class="hint">Shown live on the front panel. Pick a preset, add detail if you like.</p>
+            <div class="preset-grid" id="presetGrid" role="radiogroup" aria-label="Status preset">
+              {STATUS_PRESETS.map((p) => (
+                <button class="preset" data-preset={p.id}>
+                  <span class="p-glyph">{p.glyph}</span>
+                  <span class="p-label">{p.label}</span>
+                </button>
+              ))}
+            </div>
+            <div class="row">
+              <label class="grow">DETAIL (OPTIONAL, FREE TEXT)
+                <input type="text" id="statusNote" maxlength="60" placeholder="leg day · exploring Athens · debugging the debugger" />
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn btn-wide" id="statusSet">SET STATUS</button>
+              <button class="btn" id="statusClear">CLEAR — GO DARK</button>
+              <span class="status" id="statusMsg"></span>
+            </div>
+            <p class="now-preview" id="statusLive"></p>
+          </div>
+        </section>
+
+        <!-- THOUGHTS: the quick stream -->
+        <section class="pane" id="pane-thoughts" role="tabpanel" hidden>
+          <div class="card quickpad">
+            <h2 id="thoughtFormTitle">POST A THOUGHT</h2>
+            <textarea id="thoughtText" rows="3" placeholder="A couple of sentences. **bold**, _italic_, `code`, [links](https://…) work."></textarea>
+            <div class="row">
+              <label>DATE <input type="date" id="thoughtDate" /></label>
+              <button class="btn btn-wide" id="thoughtCommit">POST</button>
+              <button class="btn" id="thoughtCancelEdit" hidden>CANCEL EDIT</button>
+              <span class="status" id="thoughtStatus"></span>
+            </div>
+            <div class="t-preview doc-body" id="thoughtPreview" hidden></div>
+          </div>
+          <ol class="list" id="thoughtList"></ol>
+        </section>
+      </main>
+
+      <footer class="svc-foot">
+        IB-01 SERVICE TERMINAL · STATUS AND THOUGHTS GO LIVE INSTANTLY · NO REBUILD REQUIRED
+      </footer>
+    </div>
+
+    <script>
+      import '../scripts/admin';
+    </script>
+  </body>
+</html>
