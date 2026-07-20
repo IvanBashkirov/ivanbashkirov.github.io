@@ -3,11 +3,11 @@
   status: out
   desc: "An app that makes tin whistle practice genuinely fun — pick a tune, play along, and let the app hear how you're doing. Practice that feels like playing."
   link: https://windway.app
-  year: "2026"
+  date: "2026-07-15"
 
 - ch: "02"
   name: O VOS OMNES
   status: out
   desc: "A Guitar-Hero-like game, except instead of shredding you sing medieval motets. Hold your line as the notes scroll by."
   link: https://o-vos-omnes.ivanbashkirov.com/
-  year: "2026"
+  date: "2026-05-30"

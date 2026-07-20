@@ -14,6 +14,17 @@ const TITLES: Record<string, string> = {
   writing: 'WRITING — IB-01 · IVAN BASHKIROV',
 };
 const MODE_LABELS: Record<string, string> = { activity: 'LOG', projects: 'PROJ', writing: 'TXT' };
+// which entry category each mode shows (null = everything)
+const FILTER_CATS: Record<string, string | null> = {
+  activity: null,
+  projects: 'proj',
+  writing: 'doc',
+};
+const COUNT_KEYS: Record<string, string> = {
+  activity: 'countActivity',
+  projects: 'countProjects',
+  writing: 'countWriting',
+};
 
 const hasPanels = (): boolean => !!$('#panel-activity');
 
@@ -35,20 +46,30 @@ function flickScreen(): void {
   screen.classList.add('flick');
 }
 
+/** The screen is fixed — modes just filter which entries are visible. */
 export function activate(m: string, push = true): void {
-  if (!hasPanels() || !ROUTES[m]) return;
+  const panel = $('#panel-activity');
+  if (!panel || !ROUTES[m]) return;
   if (document.body.dataset.mode !== m) flickScreen();
+
+  const cat = FILTER_CATS[m];
+  for (const el of $$('[data-cat]', panel)) {
+    el.classList.toggle('filtered-out', cat !== null && el.dataset.cat !== cat);
+  }
+  for (const group of $$('.month-group', panel)) {
+    const anyVisible = $$('[data-cat]', group).some(
+      (el) => !el.classList.contains('filtered-out')
+    );
+    group.classList.toggle('empty', !anyVisible);
+  }
+
   for (const id of Object.keys(ROUTES)) {
-    const panel = $(`#panel-${id}`);
-    const tab = $(`#tab-${id}`);
-    if (panel) panel.hidden = id !== m;
-    if (tab) tab.setAttribute('aria-selected', id === m ? 'true' : 'false');
+    $(`#tab-${id}`)?.setAttribute('aria-selected', id === m ? 'true' : 'false');
   }
   const statusMode = $('#statusMode');
   const statusInfo = $('#statusInfo');
-  const panel = $(`#panel-${m}`);
   if (statusMode) statusMode.textContent = `MODE: ${MODE_LABELS[m] ?? m.toUpperCase()}`;
-  if (statusInfo && panel) statusInfo.textContent = panel.dataset.count ?? '';
+  if (statusInfo) statusInfo.textContent = panel.dataset[COUNT_KEYS[m]] ?? '';
   document.body.dataset.mode = m;
   document.title = TITLES[m];
   if (push && modeFor(location.pathname) !== m) history.pushState({ m }, '', ROUTES[m]);

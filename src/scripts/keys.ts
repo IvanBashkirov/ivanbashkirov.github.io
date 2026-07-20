@@ -3,7 +3,6 @@
 import { isEink, isLogPage, isTyping } from './util';
 import { activate, flip, isFlipped } from './nav';
 import { moveCursor, openCursor } from './cursor';
-import { ejectDoc } from './disk';
 import { testModeClose, testModeOpen } from './konami';
 
 const MODE_KEYS: Record<string, string> = {
@@ -38,7 +37,7 @@ export function initKeys(): void {
         if (isLogPage() && !isFlipped() && e.target === document.body) openCursor();
         break;
       case 'e':
-        if (isEink()) ejectDoc();
+        if (isEink()) location.assign('/writing');
         break;
       case '?':
         flip(!isFlipped());

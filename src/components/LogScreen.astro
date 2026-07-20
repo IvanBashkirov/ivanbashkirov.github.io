@@ -1,5 +1,5 @@
 ---
-import { loadLog, loadProjects, monthLabel, fmtDate, fmtDay, type LogEntry, type Project } from '../lib/data';
+import { loadLog, loadProjects, monthLabel, fmtDay, type LogEntry, type Project } from '../lib/data';
 import { getVisibleDocs, getAllDocs, docBySlug, type Doc } from '../lib/docs';
 import DiskGlyph from './DiskGlyph.astro';
 
@@ -13,7 +13,6 @@ const log = loadLog();
 const projects = loadProjects();
 const allDocs = await getAllDocs();
 const visibleDocs = await getVisibleDocs();
-const hiddenTune = allDocs.find((d) => d.data.hidden);
 
 const TAGS: Record<string, string> = { ship: 'SHIP', txt: 'TXT', note: 'NOTE' };
 const MODE_LABEL: Record<Props['active'], string> = {
@@ -22,9 +21,9 @@ const MODE_LABEL: Record<Props['active'], string> = {
   writing: 'TXT',
 };
 
-/* The LOG view is one chronological stream: log entries, docs, projects.
-   Projects only carry a year, so they sort to the top of that year. */
-type FeedItem = { date: string; dateLabel: string; groupLabel: string } & (
+/* One chronological stream. The LOG / PROJ / TXT buttons don't change
+   screens — they filter this list in place (data-cat drives it). */
+type FeedItem = { date: string; groupLabel: string; cat: 'log' | 'proj' | 'doc' } & (
   | { kind: 'log'; entry: LogEntry }
   | { kind: 'doc'; doc: Doc }
   | { kind: 'proj'; proj: Project }
@@ -33,22 +32,22 @@ type FeedItem = { date: string; dateLabel: string; groupLabel: string } & (
 const feed: FeedItem[] = [
   ...log.map((entry) => ({
     date: entry.date,
-    dateLabel: fmtDay(entry.date),
     groupLabel: monthLabel(entry.date),
+    cat: 'log' as const,
     kind: 'log' as const,
     entry,
   })),
   ...visibleDocs.map((doc) => ({
     date: doc.dateStr,
-    dateLabel: fmtDay(doc.dateStr),
     groupLabel: monthLabel(doc.dateStr),
+    cat: 'doc' as const,
     kind: 'doc' as const,
     doc,
   })),
   ...projects.map((proj) => ({
-    date: `${proj.year}-12-31`,
-    dateLabel: proj.year,
-    groupLabel: proj.year,
+    date: proj.date,
+    groupLabel: monthLabel(proj.date),
+    cat: 'proj' as const,
     kind: 'proj' as const,
     proj,
   })),
@@ -61,7 +60,11 @@ for (const item of feed) {
   else feedGroups.push({ label: item.groupLabel, items: [item] });
 }
 
-const modeCounts = {
+// which categories the initial filter shows (mirrors nav.ts FILTER_CATS)
+const activeCat = { activity: null, projects: 'proj', writing: 'doc' }[active];
+const shown = (item: FeedItem) => activeCat === null || item.cat === activeCat;
+
+const counts = {
   activity: `${feed.length} ENTRIES`,
   projects: `${projects.length} CHANNELS`,
   writing: `${visibleDocs.length} DOCS`,
@@ -78,7 +81,7 @@ function projLinkLabel(link: string): string {
   <span id="statusMode">MODE: {MODE_LABEL[active]}</span>
   <span class="status-right">
     <span id="statusFlash"></span>
-    <span id="statusInfo">{modeCounts[active]}</span>
+    <span id="statusInfo">{counts[active]}</span>
   </span>
 </div>
 
@@ -88,27 +91,29 @@ function projLinkLabel(link: string): string {
 <section
   class="panel"
   id="panel-activity"
-  aria-label="Log — everything"
-  data-count={modeCounts.activity}
+  aria-label="The log"
+  data-count-activity={counts.activity}
+  data-count-projects={counts.projects}
+  data-count-writing={counts.writing}
   data-static-entries={feed.length}
-  hidden={active !== 'activity'}
 >
   {feed.length === 0 && <p class="empty-state">LOG EMPTY · NOTHING HAS SHIPPED YET</p>}
   {
     feedGroups.map((g) => (
-      <div class="month-group">
+      <div class:list={['month-group', { empty: !g.items.some(shown) }]}>
         <div class="month-divider" aria-hidden="true">
           {g.label}
         </div>
         <ol class="entries">
           {g.items.map((item) => {
+            const hide = !shown(item);
             if (item.kind === 'log') {
               const e = item.entry;
               const doc = docBySlug(allDocs, e.doc);
               return (
-                <li class="entry" data-type={e.type}>
+                <li class:list={['entry', { 'filtered-out': hide }]} data-cat="log" data-type={e.type}>
                   <div class="meta">
-                    <span class="e-date">{item.dateLabel}</span>
+                    <span class="e-date">{fmtDay(item.date)}</span>
                     <span class={`tag tag-${e.type}`}>{TAGS[e.type]}</span>
                   </div>
                   <p class="line">{e.text}</p>
@@ -123,9 +128,9 @@ function projLinkLabel(link: string): string {
             if (item.kind === 'doc') {
               const d = item.doc;
               return (
-                <li class="entry" data-type="doc">
+                <li class:list={['entry', { 'filtered-out': hide }]} data-cat="doc" data-type="doc">
                   <div class="meta">
-                    <span class="e-date">{item.dateLabel}</span>
+                    <span class="e-date">{fmtDay(item.date)}</span>
                     <span class="tag tag-txt">DOC</span>
                   </div>
                   <p class="line">
@@ -138,9 +143,14 @@ function projLinkLabel(link: string): string {
             }
             const p = item.proj;
             return (
-              <li class="entry" data-type="proj" data-status={p.status}>
+              <li
+                class:list={['entry', { 'filtered-out': hide }]}
+                data-cat="proj"
+                data-type="proj"
+                data-status={p.status}
+              >
                 <div class="meta">
-                  <span class="e-date">{item.dateLabel}</span>
+                  <span class="e-date">{fmtDay(item.date)}</span>
                   <span class="tag tag-ship">PROJ</span>
                 </div>
                 <p class="line">
@@ -163,88 +173,4 @@ function projLinkLabel(link: string): string {
       </div>
     ))
   }
-</section>
-
-<section
-  class="panel"
-  id="panel-projects"
-  aria-label="Projects"
-  data-count={modeCounts.projects}
-  hidden={active !== 'projects'}
->
-  {projects.length === 0 && <p class="empty-state">NO CHANNELS PATCHED</p>}
-  <ol class="channels">
-    {
-      projects.map((p) => (
-        <li class="chan" data-status={p.status}>
-          <span class="c-st">{p.status.toUpperCase()}</span>
-          <div class="c-body">
-            <h3>{p.name}</h3>
-            {p.status === 'rec' && (
-              <span class="vu" aria-hidden="true">
-                <i /><i /><i />
-              </span>
-            )}
-            <p class="c-desc">{p.desc}</p>
-            {p.link && (
-              <a
-                class="attach"
-                href={p.link}
-                data-doc={p.link.startsWith('/doc/') ? p.link.split('/')[2] : undefined}
-                data-kind={p.link.startsWith('/doc/') ? 'essay' : undefined}
-              >
-                {projLinkLabel(p.link)}
-              </a>
-            )}
-          </div>
-        </li>
-      ))
-    }
-  </ol>
-  <p class="legend">REC recording · OUT shipped · MUTE struck off · STBY standby</p>
-</section>
-
-<section
-  class="panel"
-  id="panel-writing"
-  aria-label="Writing"
-  data-count={modeCounts.writing}
-  hidden={active !== 'writing'}
->
-  <div class="diskbox-wrap">
-    {visibleDocs.length === 0 && !hiddenTune && (
-      <p class="empty-state">DISK BOX EMPTY · NO DOCS ON FILE</p>
-    )}
-    <ul class="diskbox" hidden={visibleDocs.length === 0 && !hiddenTune}>
-      {
-        visibleDocs.map((d) => (
-          <li>
-            <a class="disk" href={d.url} data-doc={d.slug} data-kind={d.data.kind}>
-              <span class="label">
-                <span class="d-title">{d.data.title}</span>
-                <span class="d-meta">{fmtDate(d.dateStr)}</span>
-              </span>
-            </a>
-          </li>
-        ))
-      }
-      {
-        hiddenTune && (
-          <li id="hiddenDisk" hidden>
-            <a
-              class="disk"
-              href={hiddenTune.url}
-              data-doc={hiddenTune.slug}
-              data-kind={hiddenTune.data.kind}
-            >
-              <span class="label">
-                <span class="d-title">{hiddenTune.data.title}</span>
-                <span class="d-meta">{fmtDate(hiddenTune.dateStr)}</span>
-              </span>
-            </a>
-          </li>
-        )
-      }
-    </ul>
-  </div>
 </section>

@@ -18,7 +18,7 @@ export interface Project {
   status: 'rec' | 'out' | 'mute' | 'stby';
   desc: string;
   link?: string;
-  year: string;
+  date: string; // YYYY-MM-DD release date
 }
 
 export interface SiteMeta {
@@ -53,7 +53,8 @@ export function loadLog(): LogEntry[] {
 }
 
 export function loadProjects(): Project[] {
-  return (parse(read('projects.yaml')) ?? []) as Project[];
+  const raw = (parse(read('projects.yaml')) ?? []) as (Project & { date: unknown })[];
+  return raw.map((p) => ({ ...p, date: normalizeDate(p.date) }));
 }
 
 export const latestShip = (log: LogEntry[]) => log.find((e) => e.type === 'ship');

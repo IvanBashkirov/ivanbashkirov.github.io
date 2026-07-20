@@ -4,6 +4,7 @@
  * Everything else on the device is baked HTML.
  */
 import { firebaseConfigured } from '../lib/firebase-config';
+import { activate } from './nav';
 import { fetchCollection, fetchDocument } from '../lib/firestore-rest';
 import { presetById, type OperatorStatus } from '../lib/status-presets';
 import { renderMini } from '../lib/mini-md';
@@ -52,12 +53,12 @@ const linked = (item: FeedItem, inner: string) =>
 /** Live entries join the LOG stream: thoughts tagged, activities untagged. */
 function renderFeedItem(t: FeedItem): string {
   if (t.kind === 'activity') {
-    return `<li class="entry" data-type="live">
+    return `<li class="entry" data-cat="log" data-type="live">
       <div class="meta"><span class="e-date">${esc(fmtDay(t.date))}</span></div>
       ${linked(t, `<p class="line">${esc(t.text)}</p>`)}
     </li>`;
   }
-  return `<li class="entry" data-type="live">
+  return `<li class="entry" data-cat="log" data-type="live">
     <div class="meta">
       <span class="e-date">${esc(fmtDay(t.date))}</span>
       <span class="tag tag-note">THOUGHT</span>
@@ -66,12 +67,12 @@ function renderFeedItem(t: FeedItem): string {
   </li>`;
 }
 
-/** The status bar count may be stale after runtime entries land. */
+/** The status bar LOG count may be stale after runtime entries land. */
 function refreshStatusInfo() {
-  const m = document.body.dataset.mode;
-  const panel = m && document.getElementById(`panel-${m}`);
   const statusInfo = document.getElementById('statusInfo');
-  if (panel && statusInfo) statusInfo.textContent = panel.dataset.count ?? '';
+  const panel = document.getElementById('panel-activity');
+  if (panel && statusInfo && document.body.dataset.mode === 'activity')
+    statusInfo.textContent = panel.dataset.countActivity ?? '';
 }
 
 async function initFeed() {
@@ -98,7 +99,9 @@ async function initFeed() {
     .join('');
   panel.insertAdjacentHTML('afterbegin', html);
   const total = Number(panel.dataset.staticEntries ?? 0) + items.length;
-  panel.dataset.count = `${total} ENTRIES`;
+  panel.dataset.countActivity = `${total} ENTRIES`;
+  // if a PROJ/TXT filter is active, the fresh log entries must arrive hidden
+  activate(document.body.dataset.mode ?? 'activity', false);
   refreshStatusInfo();
 }
 
