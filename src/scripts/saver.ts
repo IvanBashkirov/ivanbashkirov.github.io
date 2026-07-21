@@ -32,22 +32,13 @@ export function initSaver(): void {
     }
     x += vx;
     y += vy;
-    let cornerHit = 0;
     if (x <= 0 || x + bw >= r.width) {
       vx = -vx;
       x = Math.max(0, Math.min(x, r.width - bw));
-      cornerHit++;
     }
     if (y <= bandTop || y + bh >= bandBottom) {
       vy = -vy;
       y = Math.max(bandTop, Math.min(y, bandBottom - bh));
-      cornerHit++;
-    }
-    if (cornerHit === 2) {
-      // corner: subtle LED blink
-      const led = $('#driveLed');
-      led?.classList.add('on');
-      window.setTimeout(() => led?.classList.remove('on'), 180);
     }
     block.style.transform = `translate(${x}px, ${y}px)`;
     raf = requestAnimationFrame(tick);

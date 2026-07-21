@@ -1,7 +1,6 @@
 ---
 import { loadLog, loadProjects, monthLabel, fmtDay, type LogEntry, type Project } from '../lib/data';
 import { getVisibleDocs, getAllDocs, docBySlug, type Doc } from '../lib/docs';
-import DiskGlyph from './DiskGlyph.astro';
 
 interface Props {
   active: 'activity' | 'projects' | 'writing';
@@ -64,12 +63,6 @@ for (const item of feed) {
 const activeCat = { activity: null, projects: 'proj', writing: 'doc' }[active];
 const shown = (item: FeedItem) => activeCat === null || item.cat === activeCat;
 
-const counts = {
-  activity: `${feed.length} ENTRIES`,
-  projects: `${projects.length} CHANNELS`,
-  writing: `${visibleDocs.length} DOCS`,
-};
-
 function projLinkLabel(link: string): string {
   if (link.startsWith('/doc/')) return 'post-mortem';
   if (link.startsWith('/')) return 'play';
@@ -77,26 +70,16 @@ function projLinkLabel(link: string): string {
 }
 ---
 
-<div class="statusbar" aria-hidden="true">
-  <span id="statusMode">MODE: {MODE_LABEL[active]}</span>
-  <span class="status-right">
+<div class="statusbar">
+  <!-- live operator status, fetched from Firestore at runtime -->
+  <span class="status-now" id="nowStrip" hidden></span>
+  <span class="status-right" aria-hidden="true">
     <span id="statusFlash"></span>
-    <span id="statusInfo">{counts[active]}</span>
+    <span id="statusMode">MODE: {MODE_LABEL[active]}</span>
   </span>
 </div>
 
-<!-- live operator status, fetched from Firestore at runtime -->
-<div class="now-strip" id="nowStrip" hidden></div>
-
-<section
-  class="panel"
-  id="panel-activity"
-  aria-label="The log"
-  data-count-activity={counts.activity}
-  data-count-projects={counts.projects}
-  data-count-writing={counts.writing}
-  data-static-entries={feed.length}
->
+<section class="panel" id="panel-activity" aria-label="The log">
   {feed.length === 0 && <p class="empty-state">LOG EMPTY · NOTHING HAS SHIPPED YET</p>}
   {
     feedGroups.map((g) => (
@@ -119,7 +102,7 @@ function projLinkLabel(link: string): string {
                   <p class="line">{e.text}</p>
                   {doc && (
                     <a class="attach" href={doc.url} data-doc={doc.slug} data-kind={doc.data.kind}>
-                      attached: “{doc.data.title}”<DiskGlyph />
+                      attached: “{doc.data.title}”
                     </a>
                   )}
                 </li>
@@ -135,7 +118,7 @@ function projLinkLabel(link: string): string {
                   </div>
                   <p class="line">
                     <a class="attach" href={d.url} data-doc={d.slug} data-kind={d.data.kind}>
-                      “{d.data.title}”<DiskGlyph />
+                      “{d.data.title}”
                     </a>
                   </p>
                 </li>

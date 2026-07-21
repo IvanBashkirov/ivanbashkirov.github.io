@@ -44,7 +44,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={desc} />
     <link rel="canonical" href={canonical} />
@@ -137,7 +137,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
                     <div class="overlay boot lcd-surface" id="boot" aria-hidden="true">
                       <div class="boot-line">IB-01</div>
                       <div class="boot-line">MEM CHECK ..... {log.length} ENTRIES OK</div>
-                      <div class="boot-line">DRIVE ......... READY</div>
                       <div class="boot-line">CLOCK ......... SYNC OK</div>
                     </div>
                     <div class="overlay saver lcd-surface" id="saver" aria-hidden="true">
@@ -151,14 +150,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
                 <div class="readout-text" id="readoutText"></div>
               </div>
             </div>
-          </div>
-
-          <div class="drive-row" aria-hidden="true">
-            <div class="drive-stack">
-              <div class="drive-slot" id="driveSlot"><div class="flap"></div></div>
-              <div class="drive-caption">DOC DRIVE · 3.5″ DD</div>
-            </div>
-            <div class="drive-led" id="driveLed"></div>
           </div>
 
           <footer class="bottom-panel">
