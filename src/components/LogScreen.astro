@@ -52,11 +52,11 @@ const feed: FeedItem[] = [
   })),
 ].sort((a, b) => b.date.localeCompare(a.date));
 
-const feedGroups: { label: string; items: FeedItem[] }[] = [];
+const feedGroups: { label: string; key: string; items: FeedItem[] }[] = [];
 for (const item of feed) {
   const last = feedGroups[feedGroups.length - 1];
   if (last && last.label === item.groupLabel) last.items.push(item);
-  else feedGroups.push({ label: item.groupLabel, items: [item] });
+  else feedGroups.push({ label: item.groupLabel, key: item.date.slice(0, 7), items: [item] });
 }
 
 // which categories the initial filter shows (mirrors nav.ts FILTER_CATS)
@@ -83,7 +83,7 @@ function projLinkLabel(link: string): string {
   {feed.length === 0 && <p class="empty-state">LOG EMPTY · NOTHING HAS SHIPPED YET</p>}
   {
     feedGroups.map((g) => (
-      <div class:list={['month-group', { empty: !g.items.some(shown) }]}>
+      <div class:list={['month-group', { empty: !g.items.some(shown) }]} data-month={g.key}>
         <div class="month-divider" aria-hidden="true">
           {g.label}
         </div>
@@ -94,7 +94,12 @@ function projLinkLabel(link: string): string {
               const e = item.entry;
               const doc = docBySlug(allDocs, e.doc);
               return (
-                <li class:list={['entry', { 'filtered-out': hide }]} data-cat="log" data-type={e.type}>
+                <li
+                  class:list={['entry', { 'filtered-out': hide }]}
+                  data-cat="log"
+                  data-type={e.type}
+                  data-date={item.date}
+                >
                   <div class="meta">
                     <span class="e-date">{fmtDay(item.date)}</span>
                     <span class={`tag tag-${e.type}`}>{TAGS[e.type]}</span>
@@ -111,7 +116,12 @@ function projLinkLabel(link: string): string {
             if (item.kind === 'doc') {
               const d = item.doc;
               return (
-                <li class:list={['entry', { 'filtered-out': hide }]} data-cat="doc" data-type="doc">
+                <li
+                  class:list={['entry', { 'filtered-out': hide }]}
+                  data-cat="doc"
+                  data-type="doc"
+                  data-date={item.date}
+                >
                   <div class="meta">
                     <span class="e-date">{fmtDay(item.date)}</span>
                     <span class="tag tag-txt">DOC</span>
@@ -131,6 +141,7 @@ function projLinkLabel(link: string): string {
                 data-cat="proj"
                 data-type="proj"
                 data-status={p.status}
+                data-date={item.date}
               >
                 <div class="meta">
                   <span class="e-date">{fmtDay(item.date)}</span>
